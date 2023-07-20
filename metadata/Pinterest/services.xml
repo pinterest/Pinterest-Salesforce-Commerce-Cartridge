@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns="http://www.demandware.com/xml/impex/services/2014-09-26">
+    <service-credential service-credential-id="pinterest.catalog.feeds">
+        <url>https://api.pinterest.com/v5/catalogs/feeds</url>
+    </service-credential>
+
+    <service-credential service-credential-id="pinterest.catalog.items">
+        <url>https://api.pinterest.com/v5/catalogs/items/batch</url>
+    </service-credential>
+
+    <service-credential service-credential-id="pinterest.conversion">
+        <url>https://api.pinterest.com/v5/ad_accounts</url>
+    </service-credential>
+
+    <service-credential service-credential-id="pinterest.integration">
+        <url>https://api.pinterest.com/v5/integrations/commerce</url>
+    </service-credential>
+
+    <service-credential service-credential-id="pinterest.oauth">
+        <url>https://api.pinterest.com/v5/oauth</url>
+    </service-credential>
+
+    <service-credential service-credential-id="pinterest.userwebsites">
+        <url>https://api.pinterest.com/v5/user_account/websites</url>
+    </service-credential>
+
+    <service-credential service-credential-id="pinterest.verification">
+        <url>https://api.pinterest.com/v5/user_account/websites/verification</url>
+    </service-credential>
+
+    <service-profile service-profile-id="pinterest.bm">
+        <timeout-millis>10000</timeout-millis>
+        <rate-limit-enabled>false</rate-limit-enabled>
+        <rate-limit-calls>0</rate-limit-calls>
+        <rate-limit-millis>0</rate-limit-millis>
+        <cb-enabled>true</cb-enabled>
+        <cb-calls>0</cb-calls>
+        <cb-millis>0</cb-millis>
+    </service-profile>
+
+    <service-profile service-profile-id="pinterest.site">
+        <timeout-millis>1000</timeout-millis>
+        <rate-limit-enabled>false</rate-limit-enabled>
+        <rate-limit-calls>0</rate-limit-calls>
+        <rate-limit-millis>0</rate-limit-millis>
+        <cb-enabled>true</cb-enabled>
+        <cb-calls>0</cb-calls>
+        <cb-millis>0</cb-millis>
+    </service-profile>
+
+    <service service-id="pinterest.catalog.feeds">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix/>
+        <comm-log-enabled>false</comm-log-enabled>
+        <force-prd-enabled>true</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>pinterest.bm</profile-id>
+        <credential-id>pinterest.catalog.feeds</credential-id>
+    </service>
+
+    <service service-id="pinterest.catalog.items">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix/>
+        <comm-log-enabled>false</comm-log-enabled>
+        <force-prd-enabled>true</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>pinterest.bm</profile-id>
+        <credential-id>pinterest.catalog.items</credential-id>
+    </service>
+
+    <service service-id="pinterest.conversion">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix/>
+        <comm-log-enabled>false</comm-log-enabled>
+        <force-prd-enabled>true</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>pinterest.site</profile-id>
+        <credential-id>pinterest.conversion</credential-id>
+    </service>
+
+    <service service-id="pinterest.integration">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix/>
+        <comm-log-enabled>false</comm-log-enabled>
+        <force-prd-enabled>true</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>pinterest.bm</profile-id>
+        <credential-id>pinterest.integration</credential-id>
+    </service>
+
+    <service service-id="pinterest.oauth">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix/>
+        <comm-log-enabled>false</comm-log-enabled>
+        <force-prd-enabled>true</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>pinterest.bm</profile-id>
+        <credential-id>pinterest.oauth</credential-id>
+    </service>
+
+    <service service-id="pinterest.userwebsites">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix/>
+        <comm-log-enabled>false</comm-log-enabled>
+        <force-prd-enabled>true</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>pinterest.bm</profile-id>
+        <credential-id>pinterest.userwebsites</credential-id>
+    </service>
+
+    <service service-id="pinterest.verification">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix/>
+        <comm-log-enabled>false</comm-log-enabled>
+        <force-prd-enabled>true</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>pinterest.site</profile-id>
+        <credential-id>pinterest.verification</credential-id>
+    </service>
+
+</services>

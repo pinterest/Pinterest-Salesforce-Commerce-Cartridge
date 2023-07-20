@@ -1,0 +1,21 @@
+{
+  "name": "link_pinterest",
+  "version": "0.1.1",
+  "description": "Pinterest LINK Cartridge",
+  "license":"Apache-2.0",
+  "main": "index.js",
+  "engines": {
+    "node": ">=4.0"
+  },
+  "scripts": {
+    "upload": "sgmf-scripts --upload -- ",
+    "uploadCartridge": "sgmf-scripts --uploadCartridge int_pinterest_sfra && sgmf-scripts --uploadCartridge bm_pinterest"
+  },
+  "devDependencies": {
+    "sgmf-scripts": "^2.4.2"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "ie >= 10"
+  ]
+}

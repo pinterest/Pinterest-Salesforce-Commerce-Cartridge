@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<extensions
+    xmlns="http://www.demandware.com/xml/bmmodules/2007-12-11"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.demandware.com/xml/bmmodules/2007-12-11 bmext.xsd"
+>
+    <menuitem id="pinterest_adminmenuextension_pinterest" position="99999" site="true">
+        <name xml:lang="x-default">Pinterest</name>
+        <short_description xml:lang="x-default">Pinterest Configuration</short_description>
+        <description xml:lang="x-default">Pinterest Configuration</description>
+        <icon>icons/pinterest_ico.png</icon>
+    </menuitem>
+    <menuaction id="pinterestsubmenu_1" menupath="pinterest_adminmenuextension_pinterest" position="1" site="true">
+        <name xml:lang="x-default">Manage App Connection</name>
+        <short_description xml:lang="x-default">Create a new connection, view an existing connection or remove a connection.</short_description>
+        <description xml:lang="x-default">Create a new connection, view an existing connection or remove a connection.</description>
+        <exec pipeline="PinterestBM" node="Start"/>
+        <icon>icons/pinterest_ico.png</icon>
+    </menuaction>
+    <menuaction id="pinterestsubmenu_2" menupath="pinterest_adminmenuextension_pinterest" position="2" site="true">
+        <name xml:lang="x-default">Domain Verification</name>
+        <short_description xml:lang="x-default">Manage verification of domains and locales.</short_description>
+        <description xml:lang="x-default">Manage verification of domains and locales.</description>
+        <exec pipeline="PinterestBM" node="Domain"/>
+        <icon>icons/pinterest_ico.png</icon>
+    </menuaction>
+</extensions>

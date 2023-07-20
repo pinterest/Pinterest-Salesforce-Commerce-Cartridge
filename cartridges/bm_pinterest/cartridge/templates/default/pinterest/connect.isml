@@ -1,0 +1,80 @@
+<isdecorate template = "application/MenuFrame.isml">
+
+    <link rel="stylesheet" href="${URLUtils.staticURL('/css/pinterestBM.css')}" type="text/css"></link>
+    <div id="bm-breadcrumb">
+        <a class="breadcrumb" href="${URLUtils.url('ViewApplication-DisplayWelcomePage')}">${Resource.msg('breadcrumb.merchanttools', 'pinterestbm', null)}</a>&nbsp;&gt;&nbsp;<a href="${URLUtils.https('SiteNavigationBar-ShowMenuitemOverview', 'CurrentMenuItemId', 'pinterest_adminmenuextension_pinterest').toString()}">${Resource.msg('breadcrumb.menuitemname', 'pinterestbm', null)}</a>&nbsp;&gt;&nbsp;${Resource.msg('breadcrumb.connection', 'pinterestbm', null)}
+    </div>
+    <h1 class="table_title">${Resource.msg('title.connect', 'pinterestbm', null)}</h1>
+    <isif condition="${pdict.isConnected}">
+        <iframe id="pinterestbm-iframe" src="${pdict.pinterestBaseUrl}/business/commerce-integrations/apps/v1/settings"></iframe>
+        <script>
+            window.addEventListener('message', ({ origin, data }) => {
+                //init
+                if (origin === '${pdict.pinterestBaseUrl}' && data && data.type === 'pinterestInit') {
+                    document.getElementById('pinterestbm-iframe').contentWindow.postMessage({
+                        type: 'integrationInit',
+                        payload: {
+                            client_id: '${pdict.clientID}',
+                            access_token: '${pdict.accessToken}',
+                            advertiser_id: '${pdict.advertiserId}',
+                            merchant_id: '${pdict.merchantId}',
+                            tag_id: '${pdict.tagId}',
+                            partner_metadata: {
+                                SFCCCompatibilityModeVersion: '${pdict.partnerMetadataSFCCCompatibilityModeVersion}',
+                                pluginVersion: '${pdict.partnerMetadataPluginVersion}',
+                                baseUrl: '${pdict.partnerMetadataBaseURL}'
+                            }
+                        }
+                    }, '${pdict.pinterestBaseUrl}');
+                    //catch any errors with disconnection
+                    <isif condition="${pdict.error}">
+                        document.getElementById('pinterestbm-iframe').contentWindow.postMessage({
+                            type: 'integrationErrors',
+                            payload: {
+                            errors: [{
+                                'integration_error_id': '${pdict.errorID}',
+                                'data': {
+                                    'message': '${pdict.errorMessage}'
+                                },
+                            }],
+                            }
+                        }, '${pdict.pinterestBaseUrl}');
+                    </isif>
+                }
+
+                //disconnect page reload
+                if (origin === '${pdict.pinterestBaseUrl}' && data && data.type === 'pinterestDelete') {
+                    var disconnectURL = new URL(window.location.href);
+                    var disconnectURLSearchParams = new URLSearchParams(disconnectURL.search);
+                    disconnectURLSearchParams.append('disconnectPinterest', true);
+                    window.location = disconnectURL.origin + disconnectURL.pathname + '?' + disconnectURLSearchParams.toString();
+                }
+            });
+        </script>
+    <iselseif condition="${pdict.clientID && !empty(pdict.clientID)}">
+        <div class="pinterestbm-connect">
+            <iframe id="pinterestbm-iframe" src="${pdict.pinterestBaseUrl}/business/commerce-integrations/apps/v1/connect"></iframe>
+            <script>
+                window.addEventListener('message', ({ origin, data }) => {
+                    //init
+                    if (origin === '${pdict.pinterestBaseUrl}' && data && data.type === 'pinterestInit') {
+                        document.getElementById('pinterestbm-iframe').contentWindow.postMessage({
+                            type: 'integrationInit',
+                            payload: {
+                                client_id: '${pdict.clientID}',
+                                redirect_uri: '${pdict.redirectURI}',
+                                state: '${pdict.state}',
+                                use_middleware: ${pdict.useMiddleware},
+                                partner_metadata: {
+                                    SFCCCompatibilityModeVersion: '${pdict.partnerMetadataSFCCCompatibilityModeVersion}',
+                                    pluginVersion: '${pdict.partnerMetadataPluginVersion}',
+                                    baseUrl: '${pdict.partnerMetadataBaseURL}'
+                                }
+                            }
+                        }, '${pdict.pinterestBaseUrl}')
+                    }
+                });
+            </script>
+        </div>
+    </isif>
+</isdecorate>

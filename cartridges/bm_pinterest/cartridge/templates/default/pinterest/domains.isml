@@ -1,0 +1,66 @@
+<isdecorate template = "application/MenuFrame.isml">
+    <link rel="stylesheet" href="${URLUtils.staticURL('/css/pinterestBM.css')}" type="text/css"></link>
+    <div id="bm-breadcrumb">
+        <a class="breadcrumb" href="${URLUtils.url('ViewApplication-DisplayWelcomePage')}">${Resource.msg('breadcrumb.merchanttools', 'pinterestbm', null)}</a>&nbsp;&gt;&nbsp;<a href="${URLUtils.https('SiteNavigationBar-ShowMenuitemOverview', 'CurrentMenuItemId', 'pinterest_adminmenuextension_pinterest').toString()}">${Resource.msg('breadcrumb.menuitemname', 'pinterestbm', null)}</a>&nbsp;&gt;&nbsp;${Resource.msg('breadcrumb.managedomains', 'pinterestbm', null)}
+    </div>
+    <h1 class="table_title">${Resource.msg('title.managedomains', 'pinterestbm', null)}</h1>
+    <isif condition="${pdict.success}">
+        <p class="green"><strong>${pdict.successMessage}</strong></p>
+    </isif>
+    <isif condition="${pdict.error}">
+        <p class="red"><strong>${pdict.errorMessage}</strong></p>
+    </isif>
+    <isif condition="${pdict.isConnected}">
+        <div class="pinterestbm-domains mb-24">
+            <div class="mb-24">
+                <p>${Resource.msg('text.domainverificationoverview', 'pinterestbm', null)}</p>
+                <a class="pinterestbm-button" href="${URLUtils.https('PinterestBM-Domain', 'verifyAll', true).toString()}">${Resource.msg('link.verificationAll', 'pinterestbm', null)}</a>
+            </div>
+            <hr class="mb-24" />
+            <p><strong>${Resource.msg('text.domainsverified', 'pinterestbm', null)}</strong></p>
+            <ul>
+                <isif condition="${pdict.data.apiSitesVerified && pdict.data.apiSitesVerified.length > 0}">
+                    <isloop items=${pdict.data.apiSitesVerified} var="site">
+                        <li>
+                            <div>
+                                <p>
+                                    ${site}
+                                    <br /><span class="green">${Resource.msg('text.verified', 'pinterestbm', null)}</span>,
+                                    <a href="${URLUtils.https('PinterestBM-Domain', 'unverifyDomain', site).toString()}">${Resource.msg('link.verificationRemove', 'pinterestbm', null)}</a>
+                                </p>
+                            </div>
+                        </li>
+                    </isloop>
+                <iselse/>
+                    <li>${Resource.msg('text.domainverificationnonefound', 'pinterestbm', null)}</li>
+                </isif>
+            </ul>
+            <p><strong>${Resource.msg('text.domainsunverified', 'pinterestbm', null)}</strong></p>
+            <ul class="mb-24">
+                <isif condition="${pdict.data.allSitesData && pdict.data.allSitesData.length > 0}">
+                    <isloop items=${pdict.data.allSitesData} var="site">
+                        <li>
+                            <div>
+                                <p>
+                                    <strong>${site.name}, Locale: ${site.locale}</strong>
+                                    <br />${site.urlPart}
+                                    <br /><span class="red">${Resource.msg('text.unverified', 'pinterestbm', null)}</span>,
+                                    <a href="${URLUtils.https('PinterestBM-Domain', 'verifyDomain', site.urlPart).toString()}">${Resource.msg('link.verificationAdd', 'pinterestbm', null)}</a>
+                                </p>
+                            </div>
+                        </li>
+                    </isloop>
+                <iselse/>
+                    <li>${Resource.msg('text.domainverificationnonefound', 'pinterestbm', null)}</li>
+                </isif>
+            </ul>
+            <div class="mb-24">
+                <p>${Resource.msg('text.domainverificationcustom', 'pinterestbm', null)}</p>
+                <form action="${URLUtils.https('PinterestBM-Domain').toString()}">
+                    <input type="text" name="verifyDomain" />
+                    <input type="submit" value="Submit"/>
+                </form>
+            </div>
+        </div>
+    </isif>
+</isdecorate>

@@ -1,0 +1,16 @@
+<isif condition="${pdict.isEnabledConversionCalls}">
+    <!-- Pinterest Tag -->
+    <iscomment>Remote include for customer specific data for base code</iscomment>
+    <isinclude url="${URLUtils.url('Pinterest-BaseCode', 'email', pdict.email, 'emailHashed', pdict.emailHashed, 'pinterestEnabledGDPR', pdict.pinterestEnabledGDPR, 'gdprConsent', pdict.gdprConsent)}"/>
+
+    <iscomment>Renders event code bases on request</iscomment>
+    <isif condition="${pdict.track !== 'false' && pdict.data !== 'false'}">
+        <script>pintrk('track', '${pdict.track}', <isprint value="${pdict.data}" encoding="htmlsinglequote"/>);</script>
+    </isif>
+    <script defer src="${URLUtils.staticURL('/js/pinterest.min.js')}"></script>
+    <!-- end Pinterest Tag -->
+</isif>
+<iscomment>Renders meta code for pinterest account verification</iscomment>
+<isif condition="${pdict.verificationCode && pdict.verificationCode !== ''}">
+    <meta name="p:domain_verify" content="${pdict.verificationCode}" />
+</isif>

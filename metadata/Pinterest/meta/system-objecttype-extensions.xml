@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <type-extension type-id="SitePreferences">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="pinterestWebDAVUser">
+                <display-name xml:lang="x-default">Pinterest WebDAV User</display-name>
+                <description xml:lang="x-default">User the Pinterest API will use to connect to this environment to pull the XML catalog feeds from.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestWebDAVPassword">
+                <display-name xml:lang="x-default">Pinterest WebDAV Password</display-name>
+                <description xml:lang="x-default">Password the Pinterest API will use to connect to this environment to pull the XML catalog feeds from.</description>
+                <type>password</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestEnabledConversionClientsideCalls">
+                <display-name xml:lang="x-default">Pinterest Enabled Conversion Clientside Calls</display-name>
+                <description xml:lang="x-default">Flag for sending clientside conversion calls. This disables the clientside JS library. Default is true.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>true</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestEnabledConversionServersideCalls">
+                <display-name xml:lang="x-default">Pinterest Enabled Conversion Serverside Calls</display-name>
+                <description xml:lang="x-default">Flag for sending serverside conversion calls. Default is true.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>true</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestEnabledGDPR">
+                <display-name xml:lang="x-default">Pinterest Enabled GDPR</display-name>
+                <description xml:lang="x-default">Flag for enabling GDPR check. Default is False.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>false</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestEnabledRealtimeCatalogCalls">
+                <display-name xml:lang="x-default">Pinterest Enabled Realtime Catalog Calls</display-name>
+                <description xml:lang="x-default">Flag for allowing catalog inventory update calls to happen when an order is placed. Default is true.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>true</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestAppID">
+                <display-name xml:lang="x-default">Pinterest App ID</display-name>
+                <description xml:lang="x-default">These values should not be changed to anything besides 1484575 or 1484576. Before considering changing to anything else please reach out to Pinterest. Production value is 1484575 and all other environments are 1484576. These are not unique to your site. Default is 1484575.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <default-value>1484575</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestCatalogFeedProductImageSize">
+                <display-name xml:lang="x-default">Pinterest Catalog Feed Product Image Size</display-name>
+                <description xml:lang="x-default">Selects what product image size group to use in the catalog feed. The max product image size for the Pinterest catalog feed is an area of 89478485 pixels, or 9450 width x 9450 height. Defaults to 'large'. </description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <default-value>large</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestAPITestModeEnabled">
+                <display-name xml:lang="x-default">Pinterest API Test Mode Enabled</display-name>
+                <description xml:lang="x-default">Enable Test Mode when interacting with Pinterest API. This only affects server side conversion event handlers. Default is false.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>false</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestRefreshTokenExpirationBuffer">
+                <display-name xml:lang="x-default">Pinterest Refresh Token Expiration Buffer Days</display-name>
+                <description xml:lang="x-default">How may days after a token is created or updated should it be refreshed. Default is 15 days.</description>
+                <type>int</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>15</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestIntegrationBaseURL">
+                <display-name xml:lang="x-default">Pinterest Integration Base URL</display-name>
+                <description xml:lang="x-default">Used for integration iframes in Business Manager. Default is 'https://commerce-app.pintergration.com'.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <default-value>https://commerce-app.pintergration.com</default-value>
+            </attribute-definition>
+        </custom-attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="Pinterest Configurations">
+                <display-name xml:lang="x-default">Pinterest Configurations</display-name>
+                <attribute attribute-id="pinterestEnabledConversionClientsideCalls"/>
+                <attribute attribute-id="pinterestEnabledConversionServersideCalls"/>
+                <attribute attribute-id="pinterestEnabledGDPR"/>
+                <attribute attribute-id="pinterestEnabledRealtimeCatalogCalls"/>
+                <attribute attribute-id="pinterestAppID"/>
+                <attribute attribute-id="pinterestWebDAVUser"/>
+                <attribute attribute-id="pinterestWebDAVPassword"/>
+                <attribute attribute-id="pinterestAPITestModeEnabled"/>
+                <attribute attribute-id="pinterestCatalogFeedProductImageSize"/>
+                <attribute attribute-id="pinterestRefreshTokenExpirationBuffer"/>
+                <attribute attribute-id="pinterestIntegrationBaseURL"/>
+            </attribute-group>
+        </group-definitions>
+    </type-extension>
+</metadata>

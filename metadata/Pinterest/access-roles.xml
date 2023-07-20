@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<access-roles xmlns="http://www.demandware.com/xml/impex/accessrole/2007-09-05">
+    <access-role role-id="Pinterest User">
+        <description/>
+        <access-controls>
+            <access-control resource-path="LOCALES/default" permission="READONLY"/>
+            <access-control resource-path="WEBDAV/Sites/IMPEX/src" permission="READONLY"/>
+        </access-controls>
+    </access-role>
+</access-roles>
+
