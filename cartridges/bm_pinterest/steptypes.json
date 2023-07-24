@@ -1,0 +1,61 @@
+{
+    "step-types": {
+        "chunk-script-module-step": [{
+                "@type-id":"custom.Pinterest.ProductExport",
+                "description":"Export Pinterest product XML feed to file.",
+                "@supports-site-context":"true",
+                "@supports-organization-context":"false",
+                "@supports-parallel-execution":"false",
+                "module":"bm_pinterest/cartridge/scripts/jobsteps/pinterestProductExport.js",
+                "before-step-function":"beforeStep",
+                "total-count-function":"getTotalCount",
+                "read-function":"read",
+                "process-function":"process",
+                "after-chunk-function":"afterChunk",
+                "write-function":"write",
+                "after-step-function":"afterStep",
+                "chunk-size":1,
+                "parameters": {},
+                "status-codes": {
+                    "status": [{
+                            "@code":"ERROR",
+                            "description":"Used when an error occurred."
+                        },
+                        {
+                            "@code":"OK",
+                            "description":"Used when everything went well."
+                        }
+                    ]
+                }
+            },
+            {
+                "@type-id":"custom.Pinterest.ProductExportOutOfStock",
+                "description":"Export out of stock items to Pinterest API.",
+                "@supports-site-context":"true",
+                "@supports-organization-context":"false",
+                "@supports-parallel-execution":"false",
+                "module":"bm_pinterest/cartridge/scripts/jobsteps/pinterestProductExportOutOfStock.js",
+                "before-step-function":"beforeStep",
+                "total-count-function":"getTotalCount",
+                "read-function":"read",
+                "process-function":"process",
+                "after-chunk-function":"afterChunk",
+                "write-function":"write",
+                "after-step-function":"afterStep",
+                "chunk-size":1,
+                "parameters": {},
+                "status-codes": {
+                    "status": [{
+                            "@code":"ERROR",
+                            "description":"Used when an error occurred."
+                        },
+                        {
+                            "@code":"OK",
+                            "description":"Used when everything went well."
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

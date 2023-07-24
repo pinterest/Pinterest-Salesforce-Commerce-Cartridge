@@ -1,0 +1,18 @@
+<script>
+    !function(e){if(!window.pintrk){window.pintrk = function () {
+    window.pintrk.queue.push(Array.prototype.slice.call(arguments))};var
+    n=window.pintrk;n.queue=[],n.version="3.0";var
+    t=document.createElement("script");t.async=!0,t.src=e;var
+    r=document.getElementsByTagName("script")[0];
+    r.parentNode.insertBefore(t,r)}}("https://s.pinimg.com/ct/core.js");
+    pintrk.partnerData = {np: 'salesforce'};
+    <isif condition="${pdict.pinterestEnabledGDPR}">
+    pintrk('setconsent', ${pdict.gdprConsent});
+    </isif>
+    <isif condition="${pdict.email != ''}">
+    pintrk('load', '${pdict.tagID}', {em: '${pdict.email}'});
+    <iselse/>
+    pintrk('load', '${pdict.tagID}');
+    </isif>
+    pintrk('page');
+</script>

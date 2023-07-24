@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>${Resource.msg('title.callback', 'pinterestbm', null)}</title>
+        <link rel="stylesheet" href="${URLUtils.staticURL('/css/pinterestBM.css')}" type="text/css"></link>
+        <script src="${URLUtils.staticURL('/js/pinterestBM.js')}"></script>
+    </head>
+    <body>
+        <isif condition="${pdict.error}">
+            <div class="pinterestbm-callback">
+                <script>
+                    if (
+                        window.opener
+                        && window.opener.parent
+                        && window.opener.parent.document
+                    ) {
+                        window.opener.parent.document.getElementById('pinterestbm-iframe').contentWindow.postMessage({
+                            type: 'integrationErrors',
+                            payload: {
+                            errors: [{
+                                'integration_error_id': '${pdict.errorID}',
+                                'data': {
+                                    'message': '${pdict.errorMessage}'
+                                },
+                            }],
+                            }
+                        }, '${pdict.pinterestBaseUrl}');
+                    }
+                    pinterestAppConnectPopupClose();
+                </script>
+            </div>
+        <iselseif condition="${pdict.warn}">
+            <div class="pinterestbm-callback">
+                <script>
+                    if (
+                        window.opener
+                        && window.opener.parent
+                        && window.opener.parent.document
+                    ) {
+                    <isloop items=${pdict.warnIDs} var="warnID" status="loopStatus">
+                        <isloop items=${pdict.warnWebsites[loopStatus.index]} var="website">
+                            window.opener.parent.document.getElementById('pinterestbm-iframe').contentWindow.postMessage({
+                                type: 'integrationErrors',
+                                payload: {
+                                errors: [{
+                                    'integration_error_id': '${pdict.warnIDs[loopStatus.index]}',
+                                    'data': {
+                                        'message': '${pdict.warnMessages[loopStatus.index]}',
+                                        'website': '${website}'
+                                    },
+                                }],
+                                }
+                            }, '${pdict.pinterestBaseUrl}');
+                        </isloop>
+                    </isloop>
+                    }
+                    pinterestAppConnectPopupClose();
+                </script>
+            </div>
+        <iselse>
+            <script>
+                pinterestAppConnectPopupCloseAndRefreshOpener();
+            </script>
+        </isif>
+    </body>
+</html>

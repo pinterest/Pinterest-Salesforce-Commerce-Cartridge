@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <custom-type type-id="pinterestConfiguration">
+        <display-name xml:lang="x-default">Pinterest Configuration</display-name>
+        <description xml:lang="x-default">This is where we hold all the data collected from the Popup UI call.</description>
+        <staging-mode>no-staging</staging-mode>
+        <storage-scope>site</storage-scope>
+        <key-definition attribute-id="pinterestAppID">
+            <type>string</type>
+            <min-length>0</min-length>
+        </key-definition>
+        <attribute-definitions>
+            <attribute-definition attribute-id="accessToken">
+                <display-name xml:lang="x-default">Access Token</display-name>
+                <type>password</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="data">
+                <display-name xml:lang="x-default">Data</display-name>
+                <type>text</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="refreshToken">
+                <display-name xml:lang="x-default">Refresh Token</display-name>
+                <type>password</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="catalogOutOfStock">
+                <display-name xml:lang="x-default">Catalog Out Of Stock</display-name>
+                <type>text</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+        </attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="pinterestConfigurations">
+                <display-name xml:lang="x-default">Pinterest Configurations</display-name>
+                <attribute attribute-id="creationDate" system="true"/>
+                <attribute attribute-id="lastModified" system="true"/>
+                <attribute attribute-id="pinterestAppID"/>
+                <attribute attribute-id="data"/>
+                <attribute attribute-id="accessToken"/>
+                <attribute attribute-id="refreshToken"/>
+                <attribute attribute-id="catalogOutOfStock"/>
+            </attribute-group>
+        </group-definitions>
+    </custom-type>
+</metadata>
