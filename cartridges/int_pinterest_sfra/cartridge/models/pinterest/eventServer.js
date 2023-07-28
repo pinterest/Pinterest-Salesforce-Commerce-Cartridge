@@ -280,7 +280,7 @@ function getPinterestCookies(userData, pdict) {
                     value: [cookie.getValue()]
                 });
             }
-            if (cookie.getName() === '_derived_epik' && cookie.getValue() !== null) {
+            if (cookie.getName() === '_epik' && cookie.getValue() !== null) {
                 Object.defineProperty(userData, 'click_id', {
                     enumerable: true,
                     value: cookie.getValue()
