@@ -16,6 +16,26 @@ var pinterestLogger = Logger.getLogger('pinterest', 'pinterest');
 var siteCurrent = Site.getCurrent();
 var pinterestAppID = siteCurrent.getCustomPreferenceValue('pinterestAppID');
 var businessAccountConfig = pinterestBMHelpers.getBusinessAccountConfig();
+var languageMapping = {  
+    'en': 'en_US', // English (United States)  
+    'es': 'es_ES', // Spanish (Spain)  
+    'fr': 'fr_FR', // French (France)  
+    'de': 'de_DE', // German (Germany)  
+    'it': 'it_IT', // Italian (Italy)  
+    'ja': 'ja_JP', // Japanese (Japan)  
+    'ko': 'ko_KR', // Korean (South Korea)  
+    'pt': 'pt_BR', // Portuguese (Brazil)  
+    'ru': 'ru_RU', // Russian (Russia)  
+    'zh': 'zh_CN', // Chinese Simplified (China)  
+    'ar': 'ar_SA', // Arabic (Saudi Arabia)  
+    'nl': 'nl_NL', // Dutch (Netherlands)  
+    'sv': 'sv_SE', // Swedish (Sweden)  
+    'pl': 'pl_PL', // Polish (Poland)  
+    'no': 'no_NO', // Norwegian (Norway)  
+    'fi': 'fi_FI', // Finnish (Finland)  
+    'da': 'da_DK', // Danish (Denmark)  
+    // Further codes can be added as per requirements  
+}
 
 function verifyAllDomains() {
     var allSites = pinterestUserWebsitesModel.getAllSites().allSitesData;
@@ -314,6 +334,7 @@ server.get('Start', server.middleware.https, function (req, res, next) {
 
 
         //render
+        viewData.locale = req.locale.id.length == 2 ? languageMapping[req.locale.id] : req.locale.id;
         if (pinterestBMHelpers.isConnected(businessAccountConfig)) {
             viewData.clientID = siteCurrent.getCustomPreferenceValue('pinterestAppID');
             viewData.accessToken = businessAccountConfig.tokenData.access_token;
