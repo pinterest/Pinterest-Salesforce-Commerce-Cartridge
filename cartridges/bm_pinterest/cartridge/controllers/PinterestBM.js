@@ -60,7 +60,7 @@ function verifyAllDomains() {
     }
 
     return result;
-};
+}
 
 /**
  * Handle Pinterest App Linking Callback
@@ -221,7 +221,7 @@ function handleConnectionCallback(httpParameterMap) {
     viewData.pinterestBaseUrl = siteCurrent.getCustomPreferenceValue('pinterestIntegrationBaseURL');
 
     return viewData;
-};
+}
 
 /**
  * Handle Pinterest App Disconnect
@@ -288,7 +288,7 @@ function handleDisconnection() {
     }
 
     return viewData;
-};
+}
 
 server.get('Start', server.middleware.https, function (req, res, next) {
     var httpParameterMap = request.getHttpParameterMap();

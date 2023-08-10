@@ -32,7 +32,7 @@ function getData(orderProductLineItems) {
     }
 
     return data;
-};
+}
 
 /**
  * Decorate event data with order product information
@@ -69,7 +69,7 @@ function getAPIPayload(locale) {
     }
 
     return data;
-};
+}
 
 /**
  * Decorate product with product information
@@ -88,7 +88,7 @@ function getProductItemID(product, apiProduct, options) {
     }
 
     return product;
-};
+}
 
 /**
  * Decorate product Attributes with product information
@@ -107,7 +107,7 @@ function getProductTitle(productAttributes, apiProduct, options) {
     }
 
     return productAttributes;
-};
+}
 
 /**
  * Decorate product Attributes with product information
@@ -128,7 +128,7 @@ function getProductDescription(productAttributes, apiProduct, options) {
     }
 
     return productAttributes;
-};
+}
 
 /**
  * Decorate product Attributes with product information
@@ -168,7 +168,7 @@ function getProductAvailability(productAttributes, apiProduct, options) {
     });
 
     return productAttributes;
-};
+}
 
 /**
  * Decorate product Attributes with product information
@@ -199,7 +199,7 @@ function getProductPrice(productAttributes, apiProduct, options) {
     }
 
     return productAttributes;
-};
+}
 
 module.exports = {
     getData: getData,

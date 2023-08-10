@@ -55,7 +55,7 @@ function htmlHead (pdict) {
     } catch (e) {
         pinterestLogger.error('Pinterest error: hook failed, ' + ((e && e.message)? e.message : 'unknown error'));
     }
-};
+}
 
 module.exports = {
     htmlHead: htmlHead

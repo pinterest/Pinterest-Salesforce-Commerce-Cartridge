@@ -50,7 +50,7 @@
             </attribute-definition>
             <attribute-definition attribute-id="pinterestAppID">
                 <display-name xml:lang="x-default">Pinterest App ID</display-name>
-                <description xml:lang="x-default">These values should not be changed to anything besides 1484575 or 1484576. Before considering changing to anything else please reach out to Pinterest. Production value is 1484575 and all other environments are 1484576. These are not unique to your site. Default is 1484575.</description>
+                <description xml:lang="x-default">These values should not be changed to anything besides 1484575. Before considering changing to anything else please reach out to Pinterest. Production value is 1484575. These are not unique to your site.</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>

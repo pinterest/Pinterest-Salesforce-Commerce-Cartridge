@@ -10,7 +10,7 @@ function getCatalogIDs() {
     var resultCatalogFeeds = pinterestCatalogFeedsService.call();
 
     if (resultCatalogFeeds.ok) {
-        JSON.parse(resultCatalogFeeds.object).items.forEach(catalog => {
+        JSON.parse(resultCatalogFeeds.object).items.forEach(function(catalog){
             //only grab active catalogs matching this site
             if (
                 catalog.status === 'ACTIVE'
@@ -25,7 +25,7 @@ function getCatalogIDs() {
     }
 
     return allCatalogIDs;
-};
+}
 
 function getCatalogs() {
     var pinterestCatalogFeedsService = require('*/cartridge/scripts/services/pinterestCatalogFeeds');
@@ -35,7 +35,7 @@ function getCatalogs() {
     var resultCatalogFeeds = pinterestCatalogFeedsService.call();
 
     if (resultCatalogFeeds.ok) {
-        JSON.parse(resultCatalogFeeds.object).items.forEach(catalog => {
+        JSON.parse(resultCatalogFeeds.object).items.forEach(function(catalog){
             //only grab active catalogs matching this site
             if (
                 catalog.status === 'ACTIVE'
@@ -50,7 +50,7 @@ function getCatalogs() {
     }
 
     return allCatalogLocales;
-};
+}
 
 module.exports = {
     getCatalogIDs: getCatalogIDs,

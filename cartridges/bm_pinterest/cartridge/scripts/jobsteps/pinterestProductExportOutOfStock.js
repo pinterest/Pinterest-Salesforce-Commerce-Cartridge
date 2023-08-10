@@ -35,7 +35,7 @@ exports.beforeStep = function () {
             var pinterestLocale = siteLocales[i];
 
             try {
-                var configCountry = configCountries.filter(locale => locale.id === siteLocales[i]);
+                var configCountry = configCountries.filter(function(locale){return locale.id === siteLocales[i]});
                 currency = dw.util.Currency.getCurrency(configCountry && configCountry.length? configCountry.pop().currencyCode : siteCurrent.defaultCurrency);
             } catch (e) {
                 currency = dw.util.Currency.getCurrency(siteCurrent.defaultCurrency);

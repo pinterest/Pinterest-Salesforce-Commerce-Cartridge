@@ -33,7 +33,9 @@ $('body').on('product:afterAddToCart', function (e, payload) {
                 && payload.pinterest
                 && payload.pinterest.pid
             ) {
-                for (var item of payload.cart.items) {
+                for (var i = 0; i < payload.cart.items.length; i++) {
+                    var item = payload.cart.items[i];
+
                     var productData = {};
 
                     if (item.id && item.id === payload.pinterest.pid) {

@@ -12,7 +12,7 @@ function getAllSites() {
     var resultWebsites = pinterestUserWebsitesService.call();
     if (resultWebsites.ok) {
         apiSitesObject = JSON.parse(resultWebsites.object);
-        apiSitesObject.items.forEach(item => {
+        apiSitesObject.items.forEach(function(item){
             if (item.status === 'verified') {
                 apiSitesVerified.push(item.website);
             } else {
@@ -24,7 +24,7 @@ function getAllSites() {
     var allSitesData = [];
     var locales = site.allowedLocales.toArray();
 
-    locales.forEach(locale => {
+    locales.forEach(function(locale){
         if (locale != 'default' && locales.length > 1) {
             request.setLocale(locale);
 
@@ -61,7 +61,7 @@ function getAllSites() {
         apiSitesVerified: apiSitesVerified,
         apiSitesNotVerified: apiSitesNotVerified
     };
-};
+}
 
 module.exports = {
     getAllSites: getAllSites

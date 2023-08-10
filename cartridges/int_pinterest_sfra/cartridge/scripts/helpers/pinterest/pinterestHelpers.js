@@ -25,7 +25,7 @@ function getDataCustomerEmail(pdict) {
     }
 
     return customerData;
-};
+}
 
 /**
  * @param {Object} pdict - current request data
@@ -35,7 +35,7 @@ function getClientEventPageVisit(pdict) {
     var eventClientDataModel = require('*/cartridge/models/pinterest/eventClient');
 
     return eventClientDataModel.getEvent(pdict, 'pagevisit');
-};
+}
 
 /**
  * @param {Object} pdict - current request data
@@ -45,7 +45,7 @@ function getClientEventSearch(pdict) {
     var eventClientDataModel = require('*/cartridge/models/pinterest/eventClient');
 
     return eventClientDataModel.getEvent(pdict, 'search');
-};
+}
 
 /**
  * @param {Object} pdict - current request data
@@ -55,7 +55,7 @@ function getClientEventViewCategory(pdict) {
     var eventClientDataModel = require('*/cartridge/models/pinterest/eventClient');
 
     return eventClientDataModel.getEvent(pdict, 'viewcategory');
-};
+}
 
 /**
  * @param {Object} pdict - current request data
@@ -65,7 +65,7 @@ function getClientEventCheckout(pdict) {
     var eventClientDataModel = require('*/cartridge/models/pinterest/eventClient');
 
     return eventClientDataModel.getEvent(pdict, 'checkout');
-};
+}
 
 /**
  * @param {Object} pdict - current route response object
@@ -86,7 +86,7 @@ function getClientEvent(pdict) {
         default:
             return false;
     }
-};
+}
 
 /**
  * @param {Object} pdict - current request data
@@ -96,7 +96,7 @@ function getServerEventAddToCart(pdict) {
     var eventServerDataModel = require('*/cartridge/models/pinterest/eventServer');
 
     return eventServerDataModel.getEvent(pdict, 'add_to_cart');
-};
+}
 
 /**
  * @param {Object} pdict - current request data
@@ -106,7 +106,7 @@ function getServerEventCheckout(pdict) {
     var eventServerDataModel = require('*/cartridge/models/pinterest/eventServer');
 
     return eventServerDataModel.getEvent(pdict, 'checkout');
-};
+}
 
 /**
  * @param {Object} pdict - current request data
@@ -116,7 +116,7 @@ function getServerEventPageVisit(pdict) {
     var eventServerDataModel = require('*/cartridge/models/pinterest/eventServer');
 
     return eventServerDataModel.getEvent(pdict, 'page_visit');
-};
+}
 
 /**
  * @param {Object} pdict - current request data
@@ -126,7 +126,7 @@ function getServerEventSearch(pdict) {
     var eventServerDataModel = require('*/cartridge/models/pinterest/eventServer');
 
     return eventServerDataModel.getEvent(pdict, 'search');
-};
+}
 
 /**
  * @param {Object} pdict - current request data
@@ -136,7 +136,7 @@ function getServerEventViewCategory(pdict) {
     var eventServerDataModel = require('*/cartridge/models/pinterest/eventServer');
 
     return eventServerDataModel.getEvent(pdict, 'view_category');
-};
+}
 
 /**
  * @param {Object} pdict - current route response object
@@ -159,7 +159,7 @@ function getServerEvent(pdict) {
         default:
             return false;
     }
-};
+}
 
 /**
  * @returns {String} filename for catalog based on current site
@@ -175,17 +175,17 @@ function getCatalogFileName(localeID, isTempFile) {
         .replace(' ', '-')
         .replace('_', '-')
         .toLowerCase();
-};
+}
 
 function getHashedData(text) {
     return dw.crypto.Encoding.toHex(new dw.crypto.MessageDigest('SHA-256').digestBytes(new dw.util.Bytes(text)));
-};
+}
 
 function getEventID(pdict) {
     if (request.requestID) {
         return request.requestID;
     }
-};
+}
 
 /**
  * Remove HTML Tags
@@ -199,7 +199,7 @@ function stripHTML(text) {
     } else {
         return text;
     }
-};
+}
 
 /**
  * Get information for model creation
@@ -229,7 +229,7 @@ function getConfig(apiProduct, params) {
     };
 
     return options;
-};
+}
 
 /**
  * If a product is master and only have one variant for a given attribute - auto select it
@@ -257,7 +257,7 @@ function getProductConfigNormalizedSelectedAttributes(apiProduct, params) {
     }
 
     return Object.keys(variables) ? variables : null;
-};
+}
 
 /**
  * Normalize product and return Product variation model
@@ -274,8 +274,11 @@ function getProductConfigVariationModel(product, productVariables) {
         var variationAttrs = variationModel.productVariationAttributes;
         Object.keys(productVariables).forEach(function (attr) {
             if (attr && productVariables[attr].value) {
+                // eslint-disable-next-line es5/no-es6-methods
                 var dwAttr = collections.find(variationAttrs,
                     function (item) { return item.ID === attr; });
+
+                // eslint-disable-next-line es5/no-es6-methods
                 var dwAttrValue = collections.find(variationModel.getAllValues(dwAttr),
                     function (item) { return item.value === productVariables[attr].value; });
                 if (dwAttr && dwAttrValue) {
@@ -285,7 +288,7 @@ function getProductConfigVariationModel(product, productVariables) {
         });
     }
     return variationModel;
-};
+}
 
 /**
  * @typedef SelectedOption
@@ -318,7 +321,7 @@ function getProductConfigCurrentOptionModel(optionModel, selectedOptions) {
     }
 
     return optionModel;
-};
+}
 
 /**
  * Return type of the current product
@@ -343,7 +346,7 @@ function getProductConfigProductType(product) {
         result = 'standard';
     }
     return result;
-};
+}
 
 /**
  * Get Pinterest Account Config
@@ -381,7 +384,7 @@ function getBusinessAccountConfig() {
     } else {
         return data;
     }
-};
+}
 
 /**
  * Check for Existing Valid Pinterest Connection
@@ -407,7 +410,7 @@ function isConnected(businessAccountConfig) {
     }
 
     return isConnected;
-};
+}
 
 /**
  * Refresh Pinterest Access Token
@@ -458,7 +461,7 @@ function refreshAccessToken(businessAccountConfig) {
 
         return false;
     }
-};
+}
 
 /**
  * Get product ids of products that are newly out of stock for 'realtime' inventory call to Pinterest
@@ -481,7 +484,7 @@ function getProductIDsWithInventoryStatusChange() {
     } else {
         return data;
     }
-};
+}
 
 /**
  * Get product ids of products that are newly out of stock for 'realtime' inventory call to Pinterest
@@ -511,7 +514,7 @@ function resetProductIDsWithInventoryStatusChange() {
 
         return false;
     }
-};
+}
 
 /**
  * Save Pinterest Account Config
@@ -556,7 +559,7 @@ function setBusinessAccountConfig(pinterestAppID, pinterestConfigurationData) {
 
         return false;
     }
-};
+}
 
 module.exports = {
     getCatalogFileName: getCatalogFileName,
