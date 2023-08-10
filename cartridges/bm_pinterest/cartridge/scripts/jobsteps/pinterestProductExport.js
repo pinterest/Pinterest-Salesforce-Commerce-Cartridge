@@ -52,7 +52,7 @@ exports.beforeStep = function () {
         if (siteLocales.length === 1 || (siteLocales[i] && siteLocales[i] !== 'default')) {
 
             try {
-                var configCountry = configCountries.filter(locale => locale.id === siteLocales[i]);
+                var configCountry = configCountries.filter(function(locale){return locale.id === siteLocales[i]});
                 localeCurrencyCode = configCountry && configCountry.length? configCountry.pop().currencyCode : siteCurrent.defaultCurrency;
             } catch (e) {
                 localeCurrencyCode = siteCurrent.defaultCurrency;
@@ -204,7 +204,7 @@ exports.write = function (lines) {
 
             //overwrite old .xml file with newly created .tmp.xml since there were no errors
             file.renameTo(new File(lines[i].folderFile.fullPath + File.SEPARATOR + pinterestHelpers.getCatalogFileName(lines[i].locale, false)));
-        };
+        }
     } catch (e) {
         processedAll = false;
         pinterestLogger.warn('Pinterest Warning: catalog processing error, ' + ((e && e.message)? e.message : 'unknown error'));
@@ -246,7 +246,7 @@ exports.afterStep = function () {
                 request.setLocale(siteLocales[i]);
 
                 try {
-                    var configCountry = configCountries.filter(locale => locale.id === siteLocales[i]);
+                    var configCountry = configCountries.filter(function(locale){return locale.id === siteLocales[i]});
                     localeCurrency = configCountry && configCountry.length? configCountry.pop().currencyCode : siteCurrent.defaultCurrency;
                 } catch (e) {
                     localeCurrency = siteCurrent.defaultCurrency;

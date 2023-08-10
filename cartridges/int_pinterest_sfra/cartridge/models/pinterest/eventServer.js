@@ -103,7 +103,7 @@ function getEvent(pdict, eventName) {
     }
 
     return eventData;
-};
+}
 
 /**
  * Decorate event data with pdict information
@@ -189,7 +189,7 @@ function getPartnerName(eventData, pdict) {
     });
 
     return eventData;
-};
+}
 
 /**
  * Decorate event data with pdict information
@@ -205,7 +205,7 @@ function getOptOut(eventData, pdict) {
     });
 
     return eventData;
-};
+}
 
 /**
  * Decorate event data with pdict information
@@ -224,7 +224,7 @@ function getLanguage(eventData, pdict) {
     }
 
     return eventData;
-};
+}
 
 /**
  * Decorate event user data with profile information
@@ -242,7 +242,7 @@ function getUserAgent(userData, pdict) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile information
@@ -260,7 +260,7 @@ function getClientIPAddress(userData, pdict) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with external id and click id information
@@ -277,7 +277,7 @@ function getPinterestCookies(userData, pdict) {
             if (cookie.getName() === '_pin_unauth' && cookie.getValue() !== null) {
                 Object.defineProperty(userData, 'external_id', {
                     enumerable: true,
-                    value: [cookie.getValue()]
+                    value: [pinterestHelpers.getHashedData(cookie.getValue())]
                 });
             }
             if (cookie.getName() === '_epik' && cookie.getValue() !== null) {
@@ -289,7 +289,7 @@ function getPinterestCookies(userData, pdict) {
         }
     }
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile information
@@ -307,7 +307,7 @@ function getEmail(userData, profile) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile information
@@ -325,7 +325,7 @@ function getFirstName(userData, profile) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile information
@@ -343,7 +343,7 @@ function getLastName(userData, profile) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile information
@@ -366,7 +366,7 @@ function getGender(userData, profile) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile information
@@ -388,7 +388,7 @@ function getBirthday(userData, profile) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile information
@@ -416,7 +416,7 @@ function getPhone(userData, profile) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile information
@@ -436,7 +436,7 @@ function getExternalID(userData, profile) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile address information
@@ -454,7 +454,7 @@ function getCity(userData, preferredAddress) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile address information
@@ -472,7 +472,7 @@ function getState(userData, preferredAddress) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile address information
@@ -490,7 +490,7 @@ function getZip(userData, preferredAddress) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event user data with profile address information
@@ -508,7 +508,7 @@ function getCountry(userData, preferredAddress) {
     }
 
     return userData;
-};
+}
 
 /**
  * Decorate event custom data with profile address information
@@ -524,7 +524,7 @@ function getNP(customData, pdict) {
     });
 
     return customData;
-};
+}
 
 /**
  * Decorate event custom data with profile address information
@@ -542,7 +542,7 @@ function getSearchString(customData, pdict) {
     }
 
     return customData;
-};
+}
 
 /**
  * Decorate event custom data with profile address information
@@ -568,7 +568,7 @@ function getValue(customData, pdict) {
     }
 
     return customData;
-};
+}
 
 /**
  * Decorate event custom data with profile address information
@@ -594,7 +594,7 @@ function getContentIDs(customData, products) {
     }
 
     return customData;
-};
+}
 
 /**
  * Decorate event custom data with profile address information
@@ -612,7 +612,7 @@ function getCurrency(customData, product) {
     }
 
     return customData;
-};
+}
 
 /**
  * Decorate event custom data with profile address information
@@ -652,7 +652,7 @@ function getContents(customData, products) {
     }
 
     return customData;
-};
+}
 
 /**
  * Decorate event custom data with profile address information
@@ -680,7 +680,7 @@ function getNumItems(customData, products) {
     });
 
     return customData;
-};
+}
 
 /**
  * Decorate event custom data with profile address information
@@ -698,7 +698,7 @@ function getOrderID(customData, pdict) {
     }
 
     return customData;
-};
+}
 
 module.exports = {
     getEvent: getEvent,

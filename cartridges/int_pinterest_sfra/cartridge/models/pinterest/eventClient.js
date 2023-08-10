@@ -35,7 +35,7 @@ function getEvent(pdict, pagetype) {
     }
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -49,7 +49,7 @@ function getNP(eventData, pdict) {
     });
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -63,7 +63,7 @@ function getCurrency(eventData, pdict) {
     });
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -82,7 +82,7 @@ function getEventID(eventData, pdict) {
     }
 
     return eventData;
-};
+}
 
 
 /**
@@ -99,7 +99,7 @@ function getProductID(eventData, product) {
     }
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -115,7 +115,7 @@ function getProductName(eventData, product) {
     }
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -140,7 +140,7 @@ function getProductPrice(eventData, product) {
     }
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -156,7 +156,7 @@ function getProductBrand(eventData, product) {
     }
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -172,7 +172,7 @@ function getProductCategory(eventData, product) {
     }
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -188,7 +188,7 @@ function getProductQuantity(eventData, product) {
     }
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -228,7 +228,7 @@ function getProductLineItems(eventData, pdict) {
     }
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -242,7 +242,7 @@ function getProperty(eventData, pdict) {
     });
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -258,7 +258,7 @@ function getSearchQuery(eventData, pdict) {
     }
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -283,7 +283,7 @@ function getValue(eventData, pdict) {
     }
 
     return eventData;
-};
+}
 
 /**
  * @param {Object} eventData - event data object to extend
@@ -299,7 +299,7 @@ function getOrderID(eventData, pdict) {
     }
 
     return eventData;
-};
+}
 
 
 module.exports = {

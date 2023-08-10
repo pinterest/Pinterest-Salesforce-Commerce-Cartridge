@@ -64,7 +64,7 @@ function getProduct(product, apiProduct, options) {
     module.exports.methods.getProductGoogleProductCategory(product, apiProduct, options);
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -81,7 +81,7 @@ function getProductTitle(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -98,7 +98,7 @@ function getProductBrand(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -115,7 +115,7 @@ function getProductID(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -158,7 +158,7 @@ function getProductPrice(product, apiProduct, options) {
     }
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -175,7 +175,7 @@ function getProductDescription(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -192,7 +192,7 @@ function getProductDescriptionHTML(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -247,7 +247,7 @@ function getProductImages(product, apiProduct, options) {
     }
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -287,7 +287,7 @@ function getProductAvailability(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -310,7 +310,7 @@ function getProductLink(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -333,7 +333,7 @@ function getProductMobileLink(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -350,7 +350,7 @@ function getProductAverageReviewRating(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -367,7 +367,7 @@ function getProductNumberOfRatings(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -384,7 +384,7 @@ function getProductNumberOfReviews(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -401,7 +401,7 @@ function getProductType(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -418,7 +418,7 @@ function getProductGTIN(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -443,7 +443,7 @@ function getProductItemGroupID(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -460,7 +460,7 @@ function getProductMPN(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -477,7 +477,7 @@ function getProductAgeGroup(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -494,7 +494,7 @@ function getProductAltText(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -519,7 +519,7 @@ function getProductColor(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -536,7 +536,7 @@ function getProductGender(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -553,7 +553,7 @@ function getProductMaterial(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -570,7 +570,7 @@ function getProductPattern(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -587,7 +587,7 @@ function getProductSize(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -604,7 +604,7 @@ function getProductSizeSystem(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -621,7 +621,7 @@ function getProductSizeType(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -680,7 +680,7 @@ function getProductVariantNamesValues(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -697,7 +697,7 @@ function getProductFreeShippingLabel(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -714,7 +714,7 @@ function getProductFreeShippingLimit(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -731,7 +731,7 @@ function getProductShipping(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -748,7 +748,7 @@ function getProductShippingHeight(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -765,7 +765,7 @@ function getProductShippingWeight(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -782,7 +782,7 @@ function getProductShippingWidth(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -799,7 +799,7 @@ function getProductTax(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -816,7 +816,7 @@ function getProductAdult(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -833,7 +833,7 @@ function getProductCheckoutEnabled(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -850,7 +850,7 @@ function getProductCustomLabel0(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -867,7 +867,7 @@ function getProductCustomLabel1(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -884,7 +884,7 @@ function getProductCustomLabel2(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -901,7 +901,7 @@ function getProductCustomLabel3(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -918,7 +918,7 @@ function getProductCustomLabel4(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -935,7 +935,7 @@ function getProductAdLink(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -952,7 +952,7 @@ function getProductCondition(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 /**
  * Decorate product with product information
@@ -969,7 +969,7 @@ function getProductGoogleProductCategory(product, apiProduct, options) {
     });
 
     return product;
-};
+}
 
 module.exports = {
     getProduct: getProduct,

@@ -28,7 +28,7 @@ function isConnected(businessAccountConfig) {
     }
 
     return isConnected;
-};
+}
 
 /**
  * Get Pinterest Account Config
@@ -67,7 +67,7 @@ function getBusinessAccountConfig() {
     } else {
         return data;
     }
-};
+}
 
 /**
  * Save Pinterest Account Config
@@ -112,7 +112,7 @@ function setBusinessAccountConfig(pinterestAppID, pinterestConfigurationData) {
 
         return false;
     }
-};
+}
 
 /**
  * Get site/env unique id
@@ -126,7 +126,7 @@ function getExternalBusinessID(advertiserID, siteCurrent) {
     } else {
         return null;
     }
-};
+}
 
 module.exports = {
     isConnected: isConnected,
