@@ -563,13 +563,13 @@ function setBusinessAccountConfig(pinterestAppID, pinterestConfigurationData) {
  * @returns {Object} Object containing customer data
  */
 function getCustomerCountryAndState(pdict) {
-    const location = {
+    var location = {
         countryHashed: '',
         stateHashed: ''
     }
 
     if (pdict.currentCustomer && pdict.currentCustomer.addressBook && pdict.currentCustomer.addressBook.preferredAddress) {
-        const preferredAddress = pdict.currentCustomer.addressBook.preferredAddress;
+        var preferredAddress = pdict.currentCustomer.addressBook.preferredAddress;
         if (preferredAddress && preferredAddress.countryCode && preferredAddress.countryCode.value) {
             location.countryHashed = module.exports.getHashedData(preferredAddress.countryCode.value);
         }
