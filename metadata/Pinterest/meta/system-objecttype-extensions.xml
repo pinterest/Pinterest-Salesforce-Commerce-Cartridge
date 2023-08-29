@@ -17,28 +17,44 @@
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
             <attribute-definition attribute-id="pinterestEnabledConversionClientsideCalls">
-                <display-name xml:lang="x-default">Pinterest Enabled Conversion Clientside Calls</display-name>
-                <description xml:lang="x-default">Flag for sending clientside conversion calls. This disables the clientside JS library. Default is true.</description>
+                <display-name xml:lang="x-default">Conversion tracking - Clientside</display-name>
+                <description xml:lang="x-default">Send clientside conversion events. To update this setting, disconnect and reconnect your Pinterest business account to SFCC.</description>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
+                <externally-managed-flag>true</externally-managed-flag>
                 <default-value>true</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="pinterestEnabledConversionServersideCalls">
-                <display-name xml:lang="x-default">Pinterest Enabled Conversion Serverside Calls</display-name>
-                <description xml:lang="x-default">Flag for sending serverside conversion calls. Default is true.</description>
+                <display-name xml:lang="x-default">Conversion tracking - Serverside</display-name>
+                <description xml:lang="x-default">Send serverside conversion events. To update this setting, disconnect and reconnect your Pinterest business account to SFCC.</description>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
+                <externally-managed-flag>true</externally-managed-flag>
                 <default-value>true</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="pinterestEnabledGDPR">
-                <display-name xml:lang="x-default">Pinterest Enabled GDPR</display-name>
-                <description xml:lang="x-default">Flag for enabling GDPR check. Default is False.</description>
+                <display-name xml:lang="x-default">Enable GDPR</display-name>
+                <description xml:lang="x-default">Enable to comply with GDPR rules</description>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <default-value>false</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestEnabledLDP">
+                <display-name xml:lang="x-default">Enable Limited Data Processing flag</display-name>
+                <description xml:lang="x-default">Enable the LDP flag to comply with obligations under CCPA and CPRA when using Pinterest's ad service.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>false</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestEnabledCatalogIngestion">
+                <display-name xml:lang="x-default">Catalog Ingestion</display-name>
+                <description xml:lang="x-default">Allow catalog ingestion to Pinterest</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>true</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="pinterestEnabledRealtimeCatalogCalls">
                 <display-name xml:lang="x-default">Pinterest Enabled Realtime Catalog Calls</display-name>
@@ -49,7 +65,7 @@
                 <default-value>true</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="pinterestAppID">
-                <display-name xml:lang="x-default">Pinterest App ID</display-name>
+                <display-name xml:lang="x-default">Client ID</display-name>
                 <description xml:lang="x-default">These values should not be changed to anything besides 1484575. Before considering changing to anything else please reach out to Pinterest. Production value is 1484575. These are not unique to your site.</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
@@ -83,8 +99,8 @@
                 <default-value>15</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="pinterestIntegrationBaseURL">
-                <display-name xml:lang="x-default">Pinterest Integration Base URL</display-name>
-                <description xml:lang="x-default">Used for integration iframes in Business Manager. Default is 'https://commerce-app.pintergration.com'.</description>
+                <display-name xml:lang="x-default">Integration Base URL</display-name>
+                <description xml:lang="x-default">Base URL path for Pinterest</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -98,6 +114,8 @@
                 <attribute attribute-id="pinterestEnabledConversionClientsideCalls"/>
                 <attribute attribute-id="pinterestEnabledConversionServersideCalls"/>
                 <attribute attribute-id="pinterestEnabledGDPR"/>
+                <attribute attribute-id="pinterestEnabledLDP"/>
+                <attribute attribute-id="pinterestEnabledCatalogIngestion"/>
                 <attribute attribute-id="pinterestEnabledRealtimeCatalogCalls"/>
                 <attribute attribute-id="pinterestAppID"/>
                 <attribute attribute-id="pinterestWebDAVUser"/>

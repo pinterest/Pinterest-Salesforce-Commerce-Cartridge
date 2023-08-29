@@ -5,6 +5,7 @@ var CustomObjectMgr = require('dw/object/CustomObjectMgr');
 var Logger = require('dw/system/Logger');
 var pinterestLogger = Logger.getLogger('pinterest', 'pinterest');
 var Transaction = require('dw/system/Transaction');
+var collections = require('*/cartridge/scripts/util/collections');
 
 /**
  * @param {Object} pdict - current request data
@@ -404,7 +405,6 @@ function isConnected(businessAccountConfig) {
         && businessAccountConfig.info
         && businessAccountConfig.info.advertiser_id
         && businessAccountConfig.info.merchant_id
-        && businessAccountConfig.info.tag_id
     ) {
         isConnected = true;
     }
@@ -422,10 +422,6 @@ function refreshAccessToken(businessAccountConfig) {
         var nowSeconds = (Math.floor(new Date().getTime()/1000));
         var pinterestAppID = Site.getCurrent().getCustomPreferenceValue('pinterestAppID');
         var bufferSeconds = Site.getCurrent().getCustomPreferenceValue('pinterestRefreshTokenExpirationBuffer') * 86400;
-
-        if (!businessAccountConfig) {
-            pinterestConfiguration = module.exports.getBusinessAccountConfig();
-        }
 
         // check if we are in range of both token expirations
         if (
@@ -561,6 +557,31 @@ function setBusinessAccountConfig(pinterestAppID, pinterestConfigurationData) {
     }
 }
 
+/**
+ * Returns customer's hashed country and state
+ * @param {Object} pdict - current request data
+ * @returns {Object} Object containing customer data
+ */
+function getCustomerCountryAndState(pdict) {
+    const location = {
+        countryHashed: '',
+        stateHashed: ''
+    }
+
+    if (pdict.currentCustomer && pdict.currentCustomer.addressBook && pdict.currentCustomer.addressBook.preferredAddress) {
+        const preferredAddress = pdict.currentCustomer.addressBook.preferredAddress;
+        if (preferredAddress && preferredAddress.countryCode && preferredAddress.countryCode.value) {
+            location.countryHashed = module.exports.getHashedData(preferredAddress.countryCode.value);
+        }
+
+        if (preferredAddress && preferredAddress.stateCode) {
+            location.stateHashed = module.exports.getHashedData(preferredAddress.stateCode.toLowerCase());
+        }
+    }
+
+    return location;
+}
+
 module.exports = {
     getCatalogFileName: getCatalogFileName,
     getDataCustomerEmail: getDataCustomerEmail,
@@ -576,6 +597,7 @@ module.exports = {
     isConnected: isConnected,
     refreshAccessToken: refreshAccessToken,
     stripHTML: stripHTML,
+    getCustomerCountryAndState: getCustomerCountryAndState,
     methods: {
         getClientEventCheckout: getClientEventCheckout,
         getClientEventPageVisit: getClientEventPageVisit,

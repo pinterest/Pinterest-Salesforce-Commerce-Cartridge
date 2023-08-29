@@ -34,13 +34,23 @@ server.get('HtmlHead', server.middleware.include, function (req, res, next) {
  */
 server.get('BaseCode', server.middleware.include, function (req, res, next) {
     var businessAccountConfig = pinterestHelpers.getBusinessAccountConfig();
+    var pinterestEnabledLDP = Site.getCurrent().getCustomPreferenceValue('pinterestEnabledLDP') || false;
+    var locationHashed = {
+        countryHashed: '',
+        stateHashed: ''
+    }
+    if (pinterestEnabledLDP) {
+        locationHashed = pinterestHelpers.getCustomerCountryAndState(req);
+    }
 
     res.render('pinterest/baseCode', {
         tagID: businessAccountConfig.info['tag_id'],
         email: req.querystring.email,
         emailHashed: req.querystring.emailHashed,
         pinterestEnabledGDPR: req.querystring.pinterestEnabledGDPR == 'true' ? true : false,
-        gdprConsent: req.querystring.gdprConsent == 'true' ? true : false
+        gdprConsent: req.querystring.gdprConsent == 'true' ? true : false,
+        pinterestEnabledLDP: pinterestEnabledLDP,
+        locationHashed: locationHashed
     });
 
     next();

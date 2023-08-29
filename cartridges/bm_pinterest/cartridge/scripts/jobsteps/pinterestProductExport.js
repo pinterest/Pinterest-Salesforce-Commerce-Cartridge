@@ -38,6 +38,12 @@ exports.beforeStep = function () {
         throw new Error('Pinterest Error: Job can not run, Pinterest App connection is disabled for site: ' + siteCurrent.ID);
     }
 
+    if (!siteCurrent.getCustomPreferenceValue('pinterestEnabledCatalogIngestion')) {
+        pinterestLogger.warn('Pinterest Error: Job can not run, Pinterest Catalog permission is disabled for site: ' + siteCurrent.ID);
+
+        throw new Error('Pinterest Error: Job can not run, Pinterest Catalog permission is disabled for site: ' + siteCurrent.ID);
+    }
+
     //create the directory if needed
     if (
         !folderFile.exists()

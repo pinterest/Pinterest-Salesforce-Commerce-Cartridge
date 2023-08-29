@@ -9,6 +9,9 @@
     <isif condition="${pdict.pinterestEnabledGDPR}">
     pintrk('setconsent', ${pdict.gdprConsent});
     </isif>
+    <isif condition="${pdict.pinterestEnabledLDP}">
+    pintrk('set', {opt_out_type: 'LDP',st:'${pdict.locationHashed.stateHashed}', country :'${pdict.locationHashed.countryHashed}'});
+    </isif>
     <isif condition="${pdict.email != ''}">
     pintrk('load', '${pdict.tagID}', {em: '${pdict.email}'});
     <iselse/>

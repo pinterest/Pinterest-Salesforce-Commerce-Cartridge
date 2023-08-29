@@ -55,6 +55,34 @@
                         }
                     ]
                 }
+            },
+            {
+                "@type-id":"custom.Pinterest.PinterestMetadataUpdate",
+                "description":"Sync plugin metadata with Pinterest",
+                "@supports-site-context":"true",
+                "@supports-organization-context":"false",
+                "@supports-parallel-execution":"false",
+                "module":"bm_pinterest/cartridge/scripts/jobsteps/pinterestMetadataUpdate.js",
+                "before-step-function":"beforeStep",
+                "total-count-function":"getTotalCount",
+                "read-function":"read",
+                "process-function":"process",
+                "after-chunk-function":"afterChunk",
+                "write-function":"write",
+                "after-step-function":"afterStep",
+                "chunk-size":1,
+                "parameters": {},
+                "status-codes": {
+                    "status": [{
+                            "@code":"ERROR",
+                            "description":"Used when an error occurred."
+                        },
+                        {
+                            "@code":"OK",
+                            "description":"Used when everything went well."
+                        }
+                    ]
+                }
             }
         ]
     }

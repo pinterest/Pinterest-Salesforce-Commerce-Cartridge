@@ -22,7 +22,6 @@ function isConnected(businessAccountConfig) {
         && businessAccountConfig.info
         && businessAccountConfig.info.advertiser_id
         && businessAccountConfig.info.merchant_id
-        && businessAccountConfig.info.tag_id
     ) {
         isConnected = true;
     }
