@@ -3,6 +3,7 @@
 // https://developers.pinterest.com/docs/api/v5/#operation/events/create
 
 var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+var Site = require('dw/system/Site');
 
 /**
  * Decorate event data with pdict information
@@ -74,6 +75,7 @@ function getEvent(pdict, eventName) {
     module.exports.methods.getUserAgent(eventData['user_data'], pdict);
     module.exports.methods.getClientIPAddress(eventData['user_data'], pdict);
     module.exports.methods.getPinterestCookies(eventData['user_data'], pdict);
+    module.exports.methods.getLDP(eventData['user_data']);
 
     if (profile) {
         var profileAddressBook;
@@ -511,6 +513,24 @@ function getCountry(userData, preferredAddress) {
 }
 
 /**
+ * Decorate event user data with profile address information
+ * @param {Object} userData - event user data object to be decorated
+ *
+ * @returns {Object} - Decorated event user data model
+ */
+function getLDP(userData) {
+    var siteCurrent = Site.getCurrent();
+    if (siteCurrent.getCustomPreferenceValue('pinterestEnabledLDP')) {
+        Object.defineProperty(userData, 'opt_out_type', {
+            enumerable: true,
+            value: 'LDP'
+        });
+    }
+
+    return userData;
+}
+
+/**
  * Decorate event custom data with profile address information
  * @param {Object} customData - event custom data object to be decorated
  * @param {dw.system.PipelineDictionary} pdict - page view pdict
@@ -720,6 +740,7 @@ module.exports = {
         getCountry: getCountry,
         getEmail: getEmail,
         getNP: getNP,
+        getLDP: getLDP,
         getSearchString: getSearchString,
         getContentIDs: getContentIDs,
         getContents: getContents,

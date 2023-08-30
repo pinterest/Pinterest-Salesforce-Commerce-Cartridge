@@ -19,6 +19,7 @@ server.append('PlaceOrder', function (req, res, next) {
     try {
         if (
             pinterestHelpers.isConnected()
+            && siteCurrent.getCustomPreferenceValue('pinterestEnabledCatalogIngestion')
             && siteCurrent.getCustomPreferenceValue('pinterestEnabledRealtimeCatalogCalls')
             && res.viewData
             && res.viewData.orderID

@@ -6,7 +6,7 @@
     </div>
     <h1 class="table_title">${Resource.msg('title.connect', 'pinterestbm', null)}</h1>
     <isif condition="${pdict.isConnected}">
-        <iframe id="pinterestbm-iframe" src="${pdict.pinterestBaseUrl}/business/commerce-integrations/apps/v1/settings?locale=${pdict.locale}"></iframe>
+        <iframe id="pinterestbm-iframe" src="${pdict.pinterestBaseUrl}/business/commerce-integrations/apps/${pdict.iframeVersion}/settings?locale=${pdict.locale}"></iframe>
         <script>
             window.addEventListener('message', ({ origin, data }) => {
                 //init
@@ -53,7 +53,7 @@
         </script>
     <iselseif condition="${pdict.clientID && !empty(pdict.clientID)}">
         <div class="pinterestbm-connect">
-            <iframe id="pinterestbm-iframe" src="${pdict.pinterestBaseUrl}/business/commerce-integrations/apps/v1/connect?locale=${pdict.locale}"></iframe>
+            <iframe id="pinterestbm-iframe" src="${pdict.pinterestBaseUrl}/business/commerce-integrations/apps/${pdict.iframeVersion}/connect?locale=${pdict.locale}"></iframe>
             <script>
                 window.addEventListener('message', ({ origin, data }) => {
                     //init

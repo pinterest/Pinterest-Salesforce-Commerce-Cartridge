@@ -12,8 +12,6 @@ module.exports = require('dw/svc/LocalServiceRegistry').createService('pinterest
      * @returns {void}
      */
     createRequest: function (svc, data) {
-        var pinterestBMHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestBMHelpers');
-
         svc.addHeader('charset', 'UTF-8');
         svc.addHeader('Content-type', 'application/json');
         svc.setAuthentication('NONE');
@@ -24,9 +22,15 @@ module.exports = require('dw/svc/LocalServiceRegistry').createService('pinterest
             svc.addHeader('Authorization', 'Bearer ' + businessAccountConfig.tokenData.access_token);
             svc.setRequestMethod('DELETE');
             svc.setURL(svc.getURL() + '/' + data.external_business_id);
-        } else {
+        } else if (data.action === 'add') {
             svc.addHeader('Authorization', 'Bearer ' + data.partner_access_token);
             svc.setRequestMethod('POST');
+        } else if (data.action === 'update') {
+            var pinterestBMHelpers = require('~/cartridge/scripts/helpers/pinterest/pinterestBMHelpers');
+            var businessAccountConfig = pinterestBMHelpers.getBusinessAccountConfig();
+            svc.addHeader('Authorization', 'Bearer ' + businessAccountConfig.tokenData.access_token);
+            svc.setRequestMethod('PATCH');
+            svc.setURL(svc.getURL() + '/' + data.external_business_id);
         }
 
         if (data) {

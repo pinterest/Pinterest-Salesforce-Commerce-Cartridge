@@ -9,6 +9,7 @@ var Logger = require('dw/system/Logger');
 var System = require('dw/system/System');
 var FileReader = require('dw/io/FileReader');
 var pinterestBMHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestBMHelpers');
+var collections = require('*/cartridge/scripts/util/collections');
 var pinterestUserWebsitesModel = require('*/cartridge/models/pinterest/userWebsites');
 var pinterestUserWebsitesService = require('*/cartridge/scripts/services/pinterestUserWebsites');
 var packageJSON = require('../../package.json');
@@ -16,25 +17,30 @@ var pinterestLogger = Logger.getLogger('pinterest', 'pinterest');
 var siteCurrent = Site.getCurrent();
 var pinterestAppID = siteCurrent.getCustomPreferenceValue('pinterestAppID');
 var businessAccountConfig = pinterestBMHelpers.getBusinessAccountConfig();
-var languageMapping = {  
-    'en': 'en_US', // English (United States)  
-    'es': 'es_ES', // Spanish (Spain)  
-    'fr': 'fr_FR', // French (France)  
-    'de': 'de_DE', // German (Germany)  
-    'it': 'it_IT', // Italian (Italy)  
-    'ja': 'ja_JP', // Japanese (Japan)  
-    'ko': 'ko_KR', // Korean (South Korea)  
-    'pt': 'pt_BR', // Portuguese (Brazil)  
-    'ru': 'ru_RU', // Russian (Russia)  
-    'zh': 'zh_CN', // Chinese Simplified (China)  
-    'ar': 'ar_SA', // Arabic (Saudi Arabia)  
-    'nl': 'nl_NL', // Dutch (Netherlands)  
-    'sv': 'sv_SE', // Swedish (Sweden)  
-    'pl': 'pl_PL', // Polish (Poland)  
-    'no': 'no_NO', // Norwegian (Norway)  
-    'fi': 'fi_FI', // Finnish (Finland)  
-    'da': 'da_DK', // Danish (Denmark)  
-    // Further codes can be added as per requirements  
+var Transaction = require('dw/system/Transaction');
+var IFRAME_VERSION = 'v2';
+var TAGS = 'tags';
+var CAPI = 'CAPI';
+var CATALOG = 'catalog';
+var languageMapping = {
+    'en': 'en_US', // English (United States)
+    'es': 'es_ES', // Spanish (Spain)
+    'fr': 'fr_FR', // French (France)
+    'de': 'de_DE', // German (Germany)
+    'it': 'it_IT', // Italian (Italy)
+    'ja': 'ja_JP', // Japanese (Japan)
+    'ko': 'ko_KR', // Korean (South Korea)
+    'pt': 'pt_BR', // Portuguese (Brazil)
+    'ru': 'ru_RU', // Russian (Russia)
+    'zh': 'zh_CN', // Chinese Simplified (China)
+    'ar': 'ar_SA', // Arabic (Saudi Arabia)
+    'nl': 'nl_NL', // Dutch (Netherlands)
+    'sv': 'sv_SE', // Swedish (Sweden)
+    'pl': 'pl_PL', // Polish (Poland)
+    'no': 'no_NO', // Norwegian (Norway)
+    'fi': 'fi_FI', // Finnish (Finland)
+    'da': 'da_DK', // Danish (Denmark)
+    // Further codes can be added as per requirements
 }
 
 function verifyAllDomains() {
@@ -111,7 +117,6 @@ function handleConnectionCallback(httpParameterMap) {
         if (
             !viewData.error
             && paramInfo.merchant_id
-            && paramInfo.tag_id
             && paramTokenData.access_token
             && paramTokenData.refresh_token
             && paramTokenData.expires_in
@@ -123,6 +128,7 @@ function handleConnectionCallback(httpParameterMap) {
             var pinterestRefreshAccessTokenExpiration = (paramTokenData.refresh_token_expires_in + nowSeconds);
             var pinterestTokenLastRefresh = (Math.floor(new Date().getTime()/1000));
 
+            paramInfo.iframe_version = IFRAME_VERSION;
             pinterestConfigurationData.tokenData = paramTokenData;
             pinterestConfigurationData.info = paramInfo;
             pinterestConfigurationData.accessTokenExpiration = pinterestAccessTokenExpiration;
@@ -137,6 +143,7 @@ function handleConnectionCallback(httpParameterMap) {
 
         // save custom object data
         // if this fails error out
+        var businessAccountConfig = null;
         if (!viewData.error) {
             var setBusinessAccountConfigResult = pinterestBMHelpers.setBusinessAccountConfig(pinterestAppID, pinterestConfigurationData);
 
@@ -148,17 +155,28 @@ function handleConnectionCallback(httpParameterMap) {
             }
         }
 
-        //link the integration
+        // link the integration
         // if this fails error out
-        if (!viewData.error) {
-            var resultIntegration = pinterestIntegrationService.call({
+        if (!viewData.error && businessAccountConfig != null) {
+            var feature_flags = businessAccountConfig.info.feature_flags;
+            feature_flags.GDPR = siteCurrent.getCustomPreferenceValue('pinterestEnabledGDPR');
+            feature_flags.LDP = siteCurrent.getCustomPreferenceValue('pinterestEnabledLDP');
+            feature_flags.real_time_updates = siteCurrent.getCustomPreferenceValue('pinterestEnabledRealtimeCatalogCalls');
+            var payload = {
                 action: 'add',
                 connected_merchant_id: businessAccountConfig.info.merchant_id,
                 connected_advertiser_id: businessAccountConfig.info.advertiser_id,
-                connected_tag_id: businessAccountConfig.info.tag_id,
                 partner_access_token: businessAccountConfig.tokenData.access_token,
-                external_business_id: pinterestBMHelpers.getExternalBusinessID(businessAccountConfig.info.advertiser_id, siteCurrent)
-            });
+                external_business_id: pinterestBMHelpers.getExternalBusinessID(businessAccountConfig.info.advertiser_id, siteCurrent),
+                partner_metadata: JSON.stringify({
+                    iframe_version: IFRAME_VERSION,
+                    feature_flags: feature_flags
+                })
+            }
+            if (businessAccountConfig.info.tag_id) {
+                payload.connected_tag_id = businessAccountConfig.info.tag_id;
+            }
+            var resultIntegration = pinterestIntegrationService.call(payload);
 
             if (!resultIntegration.ok) {
                 viewData.error = true;
@@ -166,6 +184,30 @@ function handleConnectionCallback(httpParameterMap) {
                 viewData.errorMessage = Resource.msg('error.callback', 'pinterestbm', null);
                 pinterestLogger.error('Pinterest error: ' + resultIntegration.msg + ' - ' + resultIntegration.errorMessage);
             }
+        }
+
+        // Update settings
+        if (!viewData.error && businessAccountConfig.info.feature_flags != null) {
+            var flags = businessAccountConfig.info.feature_flags;
+
+            var convertToBoolean = function(input) {
+                if (typeof input === 'string') {
+                    return input === 'true';
+                }
+                return input;
+            };
+
+            Transaction.wrap(function () {
+                if (TAGS in flags) {
+                    siteCurrent.setCustomPreferenceValue('pinterestEnabledConversionClientsideCalls', convertToBoolean(flags.tags));
+                }
+                if (CAPI in flags) {
+                    siteCurrent.setCustomPreferenceValue('pinterestEnabledConversionServersideCalls', convertToBoolean(flags.CAPI));
+                }
+                if (CATALOG in flags) {
+                    siteCurrent.setCustomPreferenceValue('pinterestEnabledCatalogIngestion', convertToBoolean(flags.catalog));
+                }
+            });
         }
 
         //get the meta tag verification code
@@ -292,6 +334,7 @@ function handleDisconnection() {
 
 server.get('Start', server.middleware.https, function (req, res, next) {
     var httpParameterMap = request.getHttpParameterMap();
+    var viewData = null;
 
     //used to verify callback is origin
     if (!session.custom.pinterestBMCallbackState) {
@@ -308,11 +351,11 @@ server.get('Start', server.middleware.https, function (req, res, next) {
         && httpParameterMap.state
         && httpParameterMap.state.value
     ) {
-        var viewData = handleConnectionCallback(httpParameterMap);
+        viewData = handleConnectionCallback(httpParameterMap);
 
         res.render('/pinterest/callback', viewData);
     } else {
-        var viewData = {
+        viewData = {
             error: false,
             errorID: '',
             errorMessage: '',
@@ -335,6 +378,7 @@ server.get('Start', server.middleware.https, function (req, res, next) {
 
         //render
         viewData.locale = req.locale.id.length == 2 ? languageMapping[req.locale.id] : req.locale.id;
+        viewData.iframeVersion = IFRAME_VERSION;
         if (pinterestBMHelpers.isConnected(businessAccountConfig)) {
             viewData.clientID = siteCurrent.getCustomPreferenceValue('pinterestAppID');
             viewData.accessToken = businessAccountConfig.tokenData.access_token;
