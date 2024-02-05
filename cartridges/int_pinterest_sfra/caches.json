@@ -1,0 +1,12 @@
+{
+    "caches": [
+      {
+        "id": "CacheForBaseCode",
+        "expireAfterSeconds": 3600
+      },
+      {
+        "id": "PinterestLogSamplingCache",
+        "expireAfterSeconds": 10
+      }
+    ]
+}

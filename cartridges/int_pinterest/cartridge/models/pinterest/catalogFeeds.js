@@ -1,6 +1,6 @@
 var Site = require('dw/system/Site');
-var Logger = require('dw/system/Logger');
-var pinterestLogger = Logger.getLogger('pinterest', 'pinterest');
+var PinterestLogger = require('*/cartridge/scripts/helpers/pinterest/pinterestLogger');
+var pinterestLogger = new PinterestLogger();
 
 function getCatalogIDs() {
     var pinterestCatalogFeedsService = require('*/cartridge/scripts/services/pinterestCatalogFeeds');
@@ -20,7 +20,7 @@ function getCatalogIDs() {
             }
         });
     } else {
-        pinterestLogger.error('Pinterest error: catalog feed, ' + resultCatalogFeeds.msg + ' - ' + resultCatalogFeeds.errorMessage);
+        pinterestLogger.logErrorFromAPIResponse('catalog feed', resultCatalogFeeds);
     }
 
     return allCatalogIDs;
@@ -44,7 +44,7 @@ function getCatalogs() {
             }
         });
     } else {
-        pinterestLogger.error('Pinterest error: catalog feed, ' + resultCatalogFeeds.msg + ' - ' + resultCatalogFeeds.errorMessage);
+        pinterestLogger.logErrorFromAPIResponse('catalog feed', resultCatalogFeeds);
     }
 
     return allCatalogLocales;

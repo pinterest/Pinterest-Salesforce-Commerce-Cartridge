@@ -1,11 +1,11 @@
 'use strict';
 
 var Site = require('dw/system/Site');
-var CustomObjectMgr = require('dw/object/CustomObjectMgr');
-var Logger = require('dw/system/Logger');
-var pinterestLogger = Logger.getLogger('pinterest', 'pinterest');
+var PinterestLogger = require('*/cartridge/scripts/helpers/pinterest/pinterestLogger');
+var pinterestLogger= new PinterestLogger();
 var Transaction = require('dw/system/Transaction');
 var collections = require('*/cartridge/scripts/util/collections');
+var ESUtils = require('*/cartridge/scripts/helpers/pinterest/pinterestESUtils');
 
 /**
  * @param {Object} pdict - current request data
@@ -83,6 +83,8 @@ function getClientEvent(pdict) {
             return module.exports.methods.getClientEventCheckout(pdict);
         case 'Product-Show':
         case 'Product-ShowCategory':
+        case 'Cart-Show':
+        case 'Checkout-Begin':
             return module.exports.methods.getClientEventPageVisit(pdict);
         default:
             return false;
@@ -156,6 +158,8 @@ function getServerEvent(pdict) {
             return module.exports.methods.getServerEventCheckout(pdict);
         case 'Product-Show':
         case 'Product-ShowCategory':
+        case 'Cart-Show':
+        case 'Checkout-Begin':
             return module.exports.methods.getServerEventPageVisit(pdict);
         default:
             return false;
@@ -182,7 +186,7 @@ function getHashedData(text) {
     return dw.crypto.Encoding.toHex(new dw.crypto.MessageDigest('SHA-256').digestBytes(new dw.util.Bytes(text)));
 }
 
-function getEventID(pdict) {
+function getEventID() { 
     if (request.requestID) {
         return request.requestID;
     }
@@ -350,69 +354,6 @@ function getProductConfigProductType(product) {
 }
 
 /**
- * Get Pinterest Account Config
- * @returns {dw.object.CustomObject} - config
- */
-function getBusinessAccountConfig() {
-    var CustomObjectMgr = require('dw/object/CustomObjectMgr');
-    var pinterestAppID = Site.getCurrent().getCustomPreferenceValue('pinterestAppID');
-    var data = {};
-
-    // custom pref pinterestAppID required to be defined
-    if (pinterestAppID) {
-        var pinterestConfiguration = CustomObjectMgr.getCustomObject('pinterestConfiguration', pinterestAppID);
-
-        if (!pinterestConfiguration) {
-            Transaction.wrap(function(){
-                pinterestConfiguration = CustomObjectMgr.createCustomObject('pinterestConfiguration', pinterestAppID);
-            });
-        }
-
-        if (pinterestConfiguration.custom.data && pinterestConfiguration.custom.data !== '') {
-            data = JSON.parse(pinterestConfiguration.custom.data);
-        }
-
-        if (
-            data.tokenData
-            && pinterestConfiguration.custom.accessToken
-            && pinterestConfiguration.custom.refreshToken
-        ) {
-            data.tokenData.access_token = pinterestConfiguration.custom.accessToken;
-            data.tokenData.refresh_token = pinterestConfiguration.custom.refreshToken;
-        }
-
-        return data;
-    } else {
-        return data;
-    }
-}
-
-/**
- * Check for Existing Valid Pinterest Connection
- * @returns {dw.object} - businessAccountConfig
- */
-function isConnected(businessAccountConfig) {
-    var isConnected = false;
-
-    if (!businessAccountConfig) {
-        var businessAccountConfig = module.exports.getBusinessAccountConfig();
-    }
-
-    if (
-        businessAccountConfig
-        && businessAccountConfig.tokenData
-        && businessAccountConfig.tokenData.access_token
-        && businessAccountConfig.info
-        && businessAccountConfig.info.advertiser_id
-        && businessAccountConfig.info.merchant_id
-    ) {
-        isConnected = true;
-    }
-
-    return isConnected;
-}
-
-/**
  * Refresh Pinterest Access Token
  * @returns {Boolean} - success or fail result updating custom object with updated access token
  */
@@ -440,20 +381,22 @@ function refreshAccessToken(businessAccountConfig) {
                 businessAccountConfig.tokenData.refresh_token = resultObject.refresh_token;
                 businessAccountConfig.refreshAccessTokenExpiration = (resultObject.refresh_token_expires_in + nowSeconds);
                 businessAccountConfig.tokenLastRefresh = (Math.floor(new Date().getTime()/1000));
-
-                module.exports.setBusinessAccountConfig(pinterestAppID, businessAccountConfig);
-
-                return businessAccountConfig;
+                try {
+                    module.exports.setBusinessAccountConfig(pinterestAppID, businessAccountConfig);
+                    return businessAccountConfig;
+                } catch(e){
+                    pinterestLogger.logError('Account configuration save failed: ' + ((e && e.message)? e.message : 'unknown error'));
+                    return false;
+                }
             } else {
-                pinterestLogger.error('Pinterest error: OAuth - ' + result.msg + ' - ' + result.errorMessage);
-
+                pinterestLogger.logError('Pinterest error: OAuth - ' + result.msg + ' - ' + result.errorMessage);
                 return false;
             }
         } else {
             return businessAccountConfig;
         }
     } catch(e) {
-        pinterestLogger.error('Pinterest error: OAuth failed, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLogger.logError('Pinterest error: OAuth failed, ' + ((e && e.message)? e.message : 'unknown error'));
 
         return false;
     }
@@ -489,7 +432,6 @@ function getProductIDsWithInventoryStatusChange() {
 function resetProductIDsWithInventoryStatusChange() {
     var CustomObjectMgr = require('dw/object/CustomObjectMgr');
     var pinterestAppID = Site.getCurrent().getCustomPreferenceValue('pinterestAppID');
-    var data = {};
 
     try {
         // custom pref pinterestAppID required to be defined
@@ -506,52 +448,7 @@ function resetProductIDsWithInventoryStatusChange() {
             return false;
         }
     } catch (e) {
-        pinterestLogger.error('Pinterest reset catalog out of stock failed: ' + ((e && e.message)? e.message : 'unknown error'));
-
-        return false;
-    }
-}
-
-/**
- * Save Pinterest Account Config
- * @param {Object} pinterestConfigurationData - url param data
- * @returns {Boolean} - success or fail result saving custom object
- */
-function setBusinessAccountConfig(pinterestAppID, pinterestConfigurationData) {
-    var accessToken = null;
-    var refreshToken = null;
-
-    try {
-        // get if it exists
-        var pinterestConfiguration = CustomObjectMgr.getCustomObject('pinterestConfiguration', pinterestAppID);
-
-        // if does not exist create it
-        if (!pinterestConfiguration) {
-            Transaction.wrap(function(){
-                pinterestConfiguration = CustomObjectMgr.createCustomObject('pinterestConfiguration', pinterestAppID);
-            });
-        }
-
-        // we don't want to save the tokens as clear text in the object so splitting them out
-        if (pinterestConfigurationData.tokenData) {
-            accessToken = pinterestConfigurationData.tokenData.access_token;
-            refreshToken = pinterestConfigurationData.tokenData.refresh_token;
-
-            delete pinterestConfigurationData.tokenData.access_token;
-            delete pinterestConfigurationData.tokenData.refresh_token;
-        }
-
-        // save the JSON object as a string
-        Transaction.wrap(function() {
-            pinterestConfiguration.custom.data = JSON.stringify(pinterestConfigurationData);
-            pinterestConfiguration.custom.accessToken = accessToken;
-            pinterestConfiguration.custom.refreshToken = refreshToken;
-            pinterestConfiguration.custom.catalogOutOfStock = JSON.stringify({});
-        });
-
-        return true;
-    } catch (e) {
-        pinterestLogger.error('Pinterest account configuration save failed: ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLogger.logError('Pinterest reset catalog out of stock failed: ' + ((e && e.message)? e.message : 'unknown error'));
 
         return false;
     }
@@ -582,7 +479,7 @@ function getCustomerCountryAndState(pdict) {
     return location;
 }
 
-module.exports = {
+module.exports = ESUtils.objAssign({}, module.superModule, {
     getCatalogFileName: getCatalogFileName,
     getDataCustomerEmail: getDataCustomerEmail,
     getClientEvent: getClientEvent,
@@ -590,11 +487,8 @@ module.exports = {
     getHashedData: getHashedData,
     getEventID: getEventID,
     getConfig: getConfig,
-    getBusinessAccountConfig: getBusinessAccountConfig,
-    setBusinessAccountConfig: setBusinessAccountConfig,
     getProductIDsWithInventoryStatusChange: getProductIDsWithInventoryStatusChange,
     resetProductIDsWithInventoryStatusChange: resetProductIDsWithInventoryStatusChange,
-    isConnected: isConnected,
     refreshAccessToken: refreshAccessToken,
     stripHTML: stripHTML,
     getCustomerCountryAndState: getCustomerCountryAndState,
@@ -613,4 +507,4 @@ module.exports = {
         getProductConfigVariationModel: getProductConfigVariationModel,
         getProductConfigNormalizedSelectedAttributes: getProductConfigNormalizedSelectedAttributes
     }
-};
+});

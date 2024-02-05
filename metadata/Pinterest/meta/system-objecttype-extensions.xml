@@ -56,20 +56,12 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <default-value>true</default-value>
             </attribute-definition>
-            <attribute-definition attribute-id="pinterestEnabledRealtimeCatalogCalls">
-                <display-name xml:lang="x-default">Pinterest Enabled Realtime Catalog Calls</display-name>
-                <description xml:lang="x-default">Flag for allowing catalog inventory update calls to happen when an order is placed. Default is true.</description>
-                <type>boolean</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <default-value>true</default-value>
-            </attribute-definition>
             <attribute-definition attribute-id="pinterestAppID">
                 <display-name xml:lang="x-default">Client ID</display-name>
                 <description xml:lang="x-default">These values should not be changed to anything besides 1484575. Before considering changing to anything else please reach out to Pinterest. Production value is 1484575. These are not unique to your site.</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
+                <externally-managed-flag>true</externally-managed-flag>
                 <min-length>0</min-length>
                 <default-value>1484575</default-value>
             </attribute-definition>
@@ -82,14 +74,6 @@
                 <min-length>0</min-length>
                 <default-value>large</default-value>
             </attribute-definition>
-            <attribute-definition attribute-id="pinterestAPITestModeEnabled">
-                <display-name xml:lang="x-default">Pinterest API Test Mode Enabled</display-name>
-                <description xml:lang="x-default">Enable Test Mode when interacting with Pinterest API. This only affects server side conversion event handlers. Default is false.</description>
-                <type>boolean</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <default-value>false</default-value>
-            </attribute-definition>
             <attribute-definition attribute-id="pinterestRefreshTokenExpirationBuffer">
                 <display-name xml:lang="x-default">Pinterest Refresh Token Expiration Buffer Days</display-name>
                 <description xml:lang="x-default">How may days after a token is created or updated should it be refreshed. Default is 15 days.</description>
@@ -97,6 +81,14 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <default-value>15</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="pinterestLoggingFlag">
+                <display-name xml:lang="x-default">Pinterest Logging Enabled</display-name>
+                <description xml:lang="x-default">Enable debug logs from Pinterest cartridge(s) to be sent to Pinterest API.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>true</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="pinterestIntegrationBaseURL">
                 <display-name xml:lang="x-default">Integration Base URL</display-name>
@@ -116,11 +108,9 @@
                 <attribute attribute-id="pinterestEnabledGDPR"/>
                 <attribute attribute-id="pinterestEnabledLDP"/>
                 <attribute attribute-id="pinterestEnabledCatalogIngestion"/>
-                <attribute attribute-id="pinterestEnabledRealtimeCatalogCalls"/>
-                <attribute attribute-id="pinterestAppID"/>
+                <attribute attribute-id="pinterestLoggingFlag"/>                
                 <attribute attribute-id="pinterestWebDAVUser"/>
                 <attribute attribute-id="pinterestWebDAVPassword"/>
-                <attribute attribute-id="pinterestAPITestModeEnabled"/>
                 <attribute attribute-id="pinterestCatalogFeedProductImageSize"/>
                 <attribute attribute-id="pinterestRefreshTokenExpirationBuffer"/>
                 <attribute attribute-id="pinterestIntegrationBaseURL"/>

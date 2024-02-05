@@ -1,10 +1,11 @@
 'use strict';
-var Logger = require('dw/system/Logger');
-var pinterestLogger = Logger.getLogger('pinterest', 'pinterest');
+var PinterestLogger = require('*/cartridge/scripts/helpers/pinterest/pinterestLogger');
+var pinterestLogger = new PinterestLogger();
+var LogSamplingEnums = require('*/cartridge/scripts/helpers/pinterest/pinterestConstants');
 
 function htmlHead (pdict) {
     var Site = require('dw/system/Site');
-    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
     var siteCurrent = Site.getCurrent();
 
     try {
@@ -22,6 +23,11 @@ function htmlHead (pdict) {
                 gdprConsent = session.privacy.consent || false;
             }
 
+            var pageVisitData = JSON.parse(JSON.stringify(clientEvent));
+            if (pageVisitData) {
+                pageVisitData.data.event_id = "PAGE_VISIT_" + clientEvent.data.event_id;  
+            }
+            
             //if token is about to expire refresh it
             businessAccountConfig = pinterestHelpers.refreshAccessToken(businessAccountConfig);
 
@@ -35,25 +41,26 @@ function htmlHead (pdict) {
                 var result = pinterestConversionService.call(serverEvent);
 
                 if (!result.ok) {
-                    pinterestLogger.error('Pinterest error: ' + result.msg + ' - ' + result.errorMessage);
+                    pinterestLogger.logErrorFromAPIResponse('pinterestConversionService', result, LogSamplingEnums.PINTEREST_CONVERSION_SERVICE_API_FAILURE);
                 }
             }
 
             //render client side event
-            velocity.render("$velocity.remoteInclude('Pinterest-HtmlHead', 'email', $email, 'emailHashed', $emailHashed, 'track', $track, 'data', $data, 'verificationCode', $verificationCode, 'isEnabledConversionCalls', $isEnabledConversionCalls)",
+            velocity.render("$velocity.remoteInclude('Pinterest-HtmlHead', 'email', $email, 'emailHashed', $emailHashed, 'track', $track, 'data', $data, 'pageVisitData', $pageVisitData, 'verificationCode', $verificationCode, 'isEnabledConversionCalls', $isEnabledConversionCalls)",
                 {
                     velocity: velocity,
                     email: customerData.email,
                     emailHashed: customerData.emailHashed,
                     track: clientEvent.track ? clientEvent.track : false,
                     data: clientEvent.data ? JSON.stringify(clientEvent.data) : false,
+                    pageVisitData: pageVisitData.data ? JSON.stringify(pageVisitData.data) : false,
                     verificationCode: businessAccountConfig.verificationCode,
                     isEnabledConversionCalls: siteCurrent.getCustomPreferenceValue('pinterestEnabledConversionClientsideCalls')
                 }
             );
         }
     } catch (e) {
-        pinterestLogger.error('Pinterest error: hook failed, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLogger.logError('Pinterest error: hook failed, ' + ((e && e.message)? e.message : 'unknown error'), LogSamplingEnums.PINTEREST_CONVERSION_SERVICE_EXCEPTION);
     }
 }
 

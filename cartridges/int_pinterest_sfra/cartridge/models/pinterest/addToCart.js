@@ -1,6 +1,6 @@
 'use strict';
 
-var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
 
 /**
  * Decorate product with product information

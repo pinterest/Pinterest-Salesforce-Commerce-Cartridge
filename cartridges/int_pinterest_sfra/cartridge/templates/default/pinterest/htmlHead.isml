@@ -7,6 +7,9 @@
     <isif condition="${pdict.track !== 'false' && pdict.data !== 'false'}">
         <script>pintrk('track', '${pdict.track}', <isprint value="${pdict.data}" encoding="htmlsinglequote"/>);</script>
     </isif>
+    <isif condition="${pdict.track !== 'pagevisit' && pdict.data !== 'false'}">
+        <script>pintrk('track', 'pagevisit', <isprint value="${pdict.pageVisitData}" encoding="htmlsinglequote"/>);</script>
+    </isif>
     <script defer src="${URLUtils.staticURL('/js/pinterest.min.js')}"></script>
     <!-- end Pinterest Tag -->
 </isif>

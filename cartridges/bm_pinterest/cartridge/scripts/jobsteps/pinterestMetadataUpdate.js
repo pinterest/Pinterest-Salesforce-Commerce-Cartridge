@@ -1,11 +1,11 @@
 /* Pinterest Product Metadata Update Job */
 'use strict';
 
-var Logger = require('dw/system/Logger');
 var Status = require('dw/system/Status');
 var ArrayList = require('dw/util/ArrayList');
 var Site = require('dw/system/Site');
-var pinterestLogger = Logger.getLogger('pinterest', 'pinterest');
+var PinterestLogger = require('*/cartridge/scripts/helpers/pinterest/pinterestLogger');
+var pinterestLoggingHelper = new PinterestLogger();
 var AllPinterestMetadataPayload;
 var AllPinterestMetadataPayloadIterator;
 var chunks = 0;
@@ -15,21 +15,20 @@ var processedAll = true;
  * Executed Before Processing of Chunk and Validates that the user is logged in
  */
 exports.beforeStep = function () {
-    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
     var siteCurrent = Site.getCurrent();
 
     if (!pinterestHelpers.isConnected()) {
-        pinterestLogger.error('Pinterest Error: Job can not run, Pinterest App connection is disabled for site: ' + siteCurrent.ID);
+        pinterestLoggingHelper.logError('Pinterest Error: Job can not run, Pinterest App connection is disabled for site: ' + siteCurrent.ID);
 
         throw new Error('Pinterest Error: Job can not run, Pinterest App connection is disabled for site: ' + siteCurrent.ID);
     }
 
-    var pinterestBMHelpers = require('~/cartridge/scripts/helpers/pinterest/pinterestBMHelpers');
     var businessAccountConfig = pinterestHelpers.getBusinessAccountConfig()
     var pinterestMetadata = new Array();
     var payload = {
         action: 'update',
-        external_business_id: pinterestBMHelpers.getExternalBusinessID(businessAccountConfig.info.advertiser_id, siteCurrent),
+        external_business_id: pinterestHelpers.getExternalBusinessID(businessAccountConfig.info.advertiser_id, siteCurrent),
         partner_metadata: JSON.stringify({
             iframe_version: businessAccountConfig.info.iframe_version,
             feature_flags: {
@@ -38,7 +37,7 @@ exports.beforeStep = function () {
                 CAPI: siteCurrent.getCustomPreferenceValue('pinterestEnabledConversionServersideCalls'),
                 GDPR: siteCurrent.getCustomPreferenceValue('pinterestEnabledGDPR'),
                 LDP: siteCurrent.getCustomPreferenceValue('pinterestEnabledLDP'),
-                real_time_updates: siteCurrent.getCustomPreferenceValue('pinterestEnabledRealtimeCatalogCalls')
+                logging: siteCurrent.getCustomPreferenceValue('pinterestLoggingFlag')
             }
         })
     }
@@ -88,7 +87,7 @@ exports.write = function (lines) {
         var result = pinterestIntegrationService.call(data);
 
         if (!result.ok) {
-            pinterestLogger.error('Pinterest Error: ' + result.msg + ' - ' + result.errorMessage);
+            pinterestLoggingHelper.logErrorFromAPIResponse('pinterestIntegrationService', result);
             processedAll = false;
         }
     }
@@ -99,7 +98,7 @@ exports.write = function (lines) {
  */
 exports.afterChunk = function () {
     chunks++;
-    pinterestLogger.info('Chunk {0} processed successfully', chunks);
+    pinterestLoggingHelper.logInfo('Chunk ' + chunks + ' processed successfully');
 };
 
 /**
@@ -108,7 +107,7 @@ exports.afterChunk = function () {
  */
 exports.afterStep = function () {
     if (processedAll) {
-        pinterestLogger.info('Pinterest metadata was updated');
+        pinterestLoggingHelper.logInfo('Pinterest metadata was updated');
         return new Status(Status.OK, 'OK', 'Pinterest metadata was updated');
     }
     throw new Error('Pinterest Error: Could not sync metadata');
