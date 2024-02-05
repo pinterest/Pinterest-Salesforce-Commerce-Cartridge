@@ -14,7 +14,7 @@ module.exports = require('dw/svc/LocalServiceRegistry').createService('pinterest
      * @returns {void}
      */
     createRequest: function (svc, data) {
-        var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+        var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
         var businessAccountConfig = pinterestHelpers.getBusinessAccountConfig();
         var url = svc.getURL() + '?ad_account_id=' + businessAccountConfig.info.advertiser_id;
 

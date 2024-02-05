@@ -1,8 +1,8 @@
+/* eslint-disable no-unused-vars */
 var pinterestAppConnectPopupClose = function(e) {
     if (e) {
         e.preventDefault();
     }
-
     window.close();
 };
 

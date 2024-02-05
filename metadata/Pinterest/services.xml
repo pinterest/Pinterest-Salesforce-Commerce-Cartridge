@@ -16,6 +16,10 @@
         <url>https://api.pinterest.com/v5/integrations/commerce</url>
     </service-credential>
 
+    <service-credential service-credential-id="pinterest.logging">
+        <url>https://api.pinterest.com/v5/integrations/logs</url>
+    </service-credential>
+
     <service-credential service-credential-id="pinterest.oauth">
         <url>https://api.pinterest.com/v5/oauth</url>
     </service-credential>
@@ -92,6 +96,17 @@
         <credential-id>pinterest.integration</credential-id>
     </service>
 
+    <service service-id="pinterest.logging">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix/>
+        <comm-log-enabled>false</comm-log-enabled>
+        <force-prd-enabled>true</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>pinterest.bm</profile-id>
+        <credential-id>pinterest.logging</credential-id>
+    </service>
+    
     <service service-id="pinterest.oauth">
         <service-type>HTTP</service-type>
         <enabled>true</enabled>

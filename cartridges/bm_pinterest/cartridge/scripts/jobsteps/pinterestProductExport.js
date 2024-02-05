@@ -2,16 +2,15 @@
 'use strict';
 
 var ProductMgr = require('dw/catalog/ProductMgr');
-var Logger = require('dw/system/Logger');
 var Status = require('dw/system/Status');
 var File = require('dw/io/File');
-var URLUtils = require('dw/web/URLUtils');
 var ArrayList = require('dw/util/ArrayList');
 var FileWriter = require('dw/io/FileWriter');
 var XMLStreamWriter = require('dw/io/XMLStreamWriter');
 var Site = require('dw/system/Site');
 var configCountries = require('*/cartridge/config/countries.json');
-var pinterestLogger = Logger.getLogger('pinterest', 'pinterest');
+var PinterestLogger = require('*/cartridge/scripts/helpers/pinterest/pinterestLogger');
+var pinterestLoggingHelper = new PinterestLogger();
 var AllCatalogXMLData;
 var AllCatalogXMLDataIterator;
 var chunks = 0;
@@ -23,7 +22,7 @@ var DEFAULT_PINTEREST_LOCALE = 'en_US';
  * Executed Before Processing of Chunk and Validates all required fields can claims the catalog via API call
  */
 exports.beforeStep = function () {
-    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
     var siteCurrent = Site.getCurrent();
     var siteLocales = siteCurrent.getAllowedLocales().toArray();
     var targetFolder = [File.IMPEX, PINTEREST_IMPEX_DIRECTORY].join(File.SEPARATOR);
@@ -31,53 +30,54 @@ exports.beforeStep = function () {
     var localeData = new Array();
     var localeCurrencyCode;
 
-    //claim the catalog
-    if (!pinterestHelpers.isConnected()) {
-        pinterestLogger.error('Pinterest Error: Job can not run, Pinterest App connection is disabled for site: ' + siteCurrent.ID);
-
-        throw new Error('Pinterest Error: Job can not run, Pinterest App connection is disabled for site: ' + siteCurrent.ID);
-    }
-
-    if (!siteCurrent.getCustomPreferenceValue('pinterestEnabledCatalogIngestion')) {
-        pinterestLogger.warn('Pinterest Error: Job can not run, Pinterest Catalog permission is disabled for site: ' + siteCurrent.ID);
-
-        throw new Error('Pinterest Error: Job can not run, Pinterest Catalog permission is disabled for site: ' + siteCurrent.ID);
-    }
-
-    //create the directory if needed
-    if (
-        !folderFile.exists()
-        && !folderFile.mkdirs()
-    ) {
-        pinterestLogger.error('Pinterest Error: Cannot create folders {0}', targetFolder);
-        throw new Error('Pinterest Error: Cannot create folders.');
-    }
-
-    //handle each locale
-    for (var i = 0; i < siteLocales.length; i++) {
-        if (siteLocales.length === 1 || (siteLocales[i] && siteLocales[i] !== 'default')) {
-
-            try {
-                var configCountry = configCountries.filter(function(locale){return locale.id === siteLocales[i]});
-                localeCurrencyCode = configCountry && configCountry.length? configCountry.pop().currencyCode : siteCurrent.defaultCurrency;
-            } catch (e) {
-                localeCurrencyCode = siteCurrent.defaultCurrency;
-            }
-
-            //set the locale so data in loop is locale specific
-            request.setLocale(siteLocales[i]);
-
-            localeData.push({
-                locale: siteLocales[i],
-                products: ProductMgr.queryAllSiteProducts(),
-                folderFile: folderFile,
-                currencyCode: localeCurrencyCode
-            });
+    try {
+        //claim the catalog
+        if (!pinterestHelpers.isConnected()) {
+            throw new Error('Pinterest App connection is disabled for site: ' + siteCurrent.ID);
         }
-    }
 
-    AllCatalogXMLData = new ArrayList(localeData);
-    AllCatalogXMLDataIterator = AllCatalogXMLData.iterator();
+        if (!siteCurrent.getCustomPreferenceValue('pinterestEnabledCatalogIngestion')) {
+            throw new Error('Pinterest Catalog permission is disabled for site: ' + siteCurrent.ID);
+        }
+
+        //create the directory if needed
+        if (
+            !folderFile.exists()
+            && !folderFile.mkdirs()
+        ) {
+            throw new Error('Cannot create folders {0}', targetFolder);
+        }
+
+        //handle each locale
+        for (var i = 0; i < siteLocales.length; i++) {
+            if (siteLocales.length === 1 || (siteLocales[i] && siteLocales[i] !== 'default')) {
+
+                try {
+                    var configCountry = configCountries.filter(function(locale){return locale.id === siteLocales[i]});
+                    localeCurrencyCode = configCountry && configCountry.length? configCountry.pop().currencyCode : siteCurrent.defaultCurrency;
+                } catch (e) {
+                    localeCurrencyCode = siteCurrent.defaultCurrency;
+                }
+
+                //set the locale so data in loop is locale specific
+                request.setLocale(siteLocales[i]);
+
+                localeData.push({
+                    locale: siteLocales[i],
+                    products: ProductMgr.queryAllSiteProducts(),
+                    folderFile: folderFile,
+                    currencyCode: localeCurrencyCode
+                });
+            }
+        }
+
+        AllCatalogXMLData = new ArrayList(localeData);
+        AllCatalogXMLDataIterator = AllCatalogXMLData.iterator();
+    } catch (e){
+        pinterestLoggingHelper.logError('Pinterest Error: Job cannot run, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLoggingHelper.flushLogCache();
+        throw e;
+    }
 };
 
 /**
@@ -119,7 +119,7 @@ exports.process = function (localeData) {
  * @param {dw.util.List} lines to write
  */
 exports.write = function (lines) {
-    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
     var catalogModel = require('*/cartridge/models/pinterest/catalog');
 
     try {
@@ -194,7 +194,7 @@ exports.write = function (lines) {
                         //end product xml nodes
                         xmlWriter.writeEndElement();
                     } else {
-                        pinterestLogger.warn('Pinterest Warning: Product ' + product.id + ' skipped during Pinterest catalog xml export. Missing required data. (id, title, description, link, image_link, price, availability)');
+                        pinterestLoggingHelper.logWarning('Pinterest Warning: Product ' + product.id + ' skipped during Pinterest catalog xml export. Missing required data. (id, title, description, link, image_link, price, availability)');
                     }
                 }
             }
@@ -213,7 +213,9 @@ exports.write = function (lines) {
         }
     } catch (e) {
         processedAll = false;
-        pinterestLogger.warn('Pinterest Warning: catalog processing error, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLoggingHelper.logWarning('Pinterest Warning: catalog processing error, ' + ((e && e.message)? e.message : 'unknown error'));
+    } finally {
+        pinterestLoggingHelper.flushLogCache();
     }
 };
 
@@ -222,7 +224,7 @@ exports.write = function (lines) {
  */
 exports.afterChunk = function () {
     chunks++;
-    pinterestLogger.info('Chunk {0} processed successfully', chunks);
+    pinterestLoggingHelper.logInfo('Chunk ' + chunks + ' processed successfully');
 };
 
 /**
@@ -230,12 +232,13 @@ exports.afterChunk = function () {
  * @returns {Object} OK || ERROR
  */
 exports.afterStep = function () {
-    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
     var pinterestCatalogFeedsModel = require('*/cartridge/models/pinterest/catalogFeeds');
     var pinterestCatalogFeedsService = require('*/cartridge/scripts/services/pinterestCatalogFeeds');
     var siteCurrent = Site.getCurrent();
     var siteLocales = siteCurrent.getAllowedLocales().toArray();
     var apiLocales = pinterestCatalogFeedsModel.getCatalogs();
+    pinterestHelpers.clearErrorsPinterestConfig();
 
     if (processedAll && siteLocales.length) {
         //add catalogs to API, handle each locale
@@ -278,10 +281,14 @@ exports.afterStep = function () {
                     //error check
                     if (!resultCatalogFeeds.ok) {
                         processedAll = false;
-                        pinterestLogger.error('Pinterest error: catalog feed, ' + pinterestLocale + ', ' + resultCatalogFeeds.msg + ' - ' + resultCatalogFeeds.errorMessage);
+                        var errorData = {
+                            'message': resultCatalogFeeds.errorMessage
+                        }
+                        pinterestHelpers.addErrorPinterestConfig('ERROR_CREATE_CATALOG_FEED', errorData);
+                        pinterestLoggingHelper.logErrorFromAPIResponse('catalog feed, ' + pinterestLocale, resultCatalogFeeds);
                     }
                 } else {
-                    var data = {
+                    data = {
                         action: 'update',
                         feed_id: apiLocales[pinterestLocale].id,
                         format: 'XML',
@@ -291,12 +298,12 @@ exports.afterStep = function () {
                             password: siteCurrent.getCustomPreferenceValue('pinterestWebDAVPassword')
                         }
                     };
-                    var resultCatalogFeeds = pinterestCatalogFeedsService.call(data);
+                    resultCatalogFeeds = pinterestCatalogFeedsService.call(data);
 
                     //error check
                     if (!resultCatalogFeeds.ok) {
                         processedAll = false;
-                        pinterestLogger.error('Pinterest error: catalog feed, ' + pinterestLocale + ', ' + resultCatalogFeeds.msg + ' - ' + resultCatalogFeeds.errorMessage);
+                        pinterestLoggingHelper.logErrorFromAPIResponse('catalog feed, ' + pinterestLocale, resultCatalogFeeds);
                     }
 
                     //remove it from the array so we know what catalogs need removed later
@@ -323,17 +330,17 @@ exports.afterStep = function () {
                 //error check
                 if (!resultCatalogDelete.ok) {
                     processedAll = false;
-                    pinterestLogger.error('Pinterest Error: Disconnect Failed, Catalog Feeds,' + resultCatalogDelete.msg + ' - ' + resultCatalogDelete.errorMessage);
+                    pinterestLoggingHelper.logErrorFromAPIResponse('Disconnect Failed, Catalog Feeds', resultCatalogDelete);
                 }
             }
         }
     }
 
     if (processedAll) {
-        pinterestLogger.info('Pinterest: Export of product xml files was successful');
-
+        pinterestLoggingHelper.logInfo('Pinterest: Export of product xml files was successful');
+        pinterestLoggingHelper.flushLogCache();
         return new Status(Status.OK, 'OK', 'Export of product xml files was successful');
     }
-
+    pinterestLoggingHelper.flushLogCache();
     throw new Error('Pinterest Error: Could not process all the catalog xml files');
 };

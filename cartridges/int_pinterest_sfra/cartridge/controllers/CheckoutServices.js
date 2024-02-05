@@ -4,15 +4,15 @@ var page = module.superModule;
 var server = require('server');
 var CustomObjectMgr = require('dw/object/CustomObjectMgr');
 var Site = require('dw/system/Site');
-var Locale = require('dw/util/Locale');
+var LogSamplingEnums = require('*/cartridge/scripts/helpers/pinterest/pinterestConstants');
 var Transaction = require('dw/system/Transaction');
-var Logger = require('dw/system/Logger');
-var pinterestLogger = Logger.getLogger('pinterest', 'pinterest');
+var PinterestLogger = require('*/cartridge/scripts/helpers/pinterest/pinterestLogger');
+var pinterestLogger = new PinterestLogger();
 
 server.extend(page);
 
 server.append('PlaceOrder', function (req, res, next) {
-    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
     var siteCurrent = Site.getCurrent();
     var pinterestAppID = siteCurrent.getCustomPreferenceValue('pinterestAppID');
 
@@ -20,7 +20,6 @@ server.append('PlaceOrder', function (req, res, next) {
         if (
             pinterestHelpers.isConnected()
             && siteCurrent.getCustomPreferenceValue('pinterestEnabledCatalogIngestion')
-            && siteCurrent.getCustomPreferenceValue('pinterestEnabledRealtimeCatalogCalls')
             && res.viewData
             && res.viewData.orderID
             && res.viewData.orderToken
@@ -64,14 +63,14 @@ server.append('PlaceOrder', function (req, res, next) {
                         pinterestConfiguration.custom.catalogOutOfStock = JSON.stringify(catalogOutOfStock);
                     });
                 } else {
-                    pinterestLogger.error('Pinterest error: Pinterest configuration not defined during PlaceOrder');
+                    pinterestLogger.logError('Pinterest error: Pinterest configuration not defined during PlaceOrder', LogSamplingEnums.CHECKOUT_SET_CONFIG_NO_CONFIG);
                 }
             }
         }
     } catch (e) {
-        pinterestLogger.error('Pinterest error: PlaceOrder, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLogger.logError('Pinterest error: PlaceOrder, ' + ((e && e.message)? e.message : 'unknown error'), LogSamplingEnums.CHECKOUT_SET_CONFIG_EXCEPTION);
     }
-
+    pinterestLogger.flushLogCache();
     next();
 });
 

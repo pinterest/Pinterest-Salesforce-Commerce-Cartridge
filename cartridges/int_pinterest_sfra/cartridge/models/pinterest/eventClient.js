@@ -12,7 +12,6 @@ function getEvent(pdict, pagetype) {
         'track': pagetype,
         'data': {}
     };
-    var profile = pdict.CurrentCustomer.profile;
 
     module.exports.methods.getNP(eventData.data, pdict);
     module.exports.methods.getCurrency(eventData.data, pdict);
@@ -23,17 +22,6 @@ function getEvent(pdict, pagetype) {
     module.exports.methods.getValue(eventData.data, pdict);
     module.exports.methods.getOrderID(eventData.data, pdict);
 
-    if (pdict.product) {
-        eventData.data['line_items'] = [{}];
-
-        module.exports.methods.getProductID(eventData.data['line_items'][0], pdict.product);
-        module.exports.methods.getProductName(eventData.data['line_items'][0], pdict.product);
-        module.exports.methods.getProductPrice(eventData.data['line_items'][0], pdict.product);
-        module.exports.methods.getProductBrand(eventData.data['line_items'][0], pdict.product);
-        module.exports.methods.getProductCategory(eventData.data['line_items'][0], pdict.product);
-        module.exports.methods.getProductQuantity(eventData.data['line_items'][0], pdict.product);
-    }
-
     return eventData;
 }
 
@@ -42,7 +30,7 @@ function getEvent(pdict, pagetype) {
  * @param {Object} pdict - current request data
  * @returns {Object} an object of containing tag data
  */
-function getNP(eventData, pdict) {
+function getNP(eventData, pdict) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(eventData, 'np', {
         enumerable: true,
         value: 'salesforce'
@@ -56,7 +44,7 @@ function getNP(eventData, pdict) {
  * @param {Object} pdict - current request data
  * @returns {Object} an object of containing tag data
  */
-function getCurrency(eventData, pdict) {
+function getCurrency(eventData, pdict) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(eventData, 'currency', {
         enumerable: true,
         value: require('dw/system/Site').getCurrent().getDefaultCurrency()
@@ -71,7 +59,7 @@ function getCurrency(eventData, pdict) {
  * @returns {Object} an object of containing tag data
  */
 function getEventID(eventData, pdict) {
-    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+    var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
     var eventID = pinterestHelpers.getEventID(pdict);
 
     if (eventID) {
@@ -205,6 +193,23 @@ function getProductLineItems(eventData, pdict) {
         items = pdict.items.toArray();
     } else if (pdict.order && pdict.order.items && pdict.order.items.items) {
         items = pdict.order.items.items;
+    } else if (pdict.product) {
+        items = [pdict.product];
+    } else if (pdict.productSearch && pdict.productSearch.isCategorySearch) {
+        items = [];
+        pdict.productSearch.productIds.forEach(function (result) {
+            if (result.productSearchHit) {
+                var productData = {};
+                productData['id'] = result.productSearchHit.productID;
+                productData['productName'] = result.productSearchHit.product.name;
+                productData['brand'] = result.productSearchHit.product.brand;
+                productData['pinterest'] = {
+                    category: pdict.productSearch.category.id
+                };
+                productData['quantity'] = 1;
+                items.push(productData);
+            }
+        });
     }
 
     if (items) {
@@ -235,7 +240,7 @@ function getProductLineItems(eventData, pdict) {
  * @param {Object} pdict - current request data
  * @returns {Object} an object of containing tag data
  */
-function getProperty(eventData, pdict) {
+function getProperty(eventData, pdict) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(eventData, 'property', {
         enumerable: true,
         value: require('dw/system/Site').getCurrent().getName()

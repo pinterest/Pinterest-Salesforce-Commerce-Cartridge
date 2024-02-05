@@ -14,8 +14,8 @@ module.exports = require('dw/svc/LocalServiceRegistry').createService('pinterest
      * @returns {void}
      */
     createRequest: function (svc, data) {
-        var pinterestBMHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestBMHelpers');
-        var businessAccountConfig = pinterestBMHelpers.getBusinessAccountConfig();
+        var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
+        var businessAccountConfig = pinterestHelpers.getBusinessAccountConfig();
 
         svc.addHeader('charset', 'UTF-8');
         svc.addHeader('Content-type', 'application/json');

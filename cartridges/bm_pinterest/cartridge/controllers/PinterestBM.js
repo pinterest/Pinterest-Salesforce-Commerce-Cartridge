@@ -5,15 +5,12 @@ var Site = require('dw/system/Site');
 var Resource = require('dw/web/Resource');
 var UUIDUtils = require('dw/util/UUIDUtils');
 var URLUtils = require('dw/web/URLUtils');
-var Logger = require('dw/system/Logger');
 var System = require('dw/system/System');
-var FileReader = require('dw/io/FileReader');
-var pinterestBMHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestBMHelpers');
-var collections = require('*/cartridge/scripts/util/collections');
-var pinterestUserWebsitesModel = require('*/cartridge/models/pinterest/userWebsites');
-var pinterestUserWebsitesService = require('*/cartridge/scripts/services/pinterestUserWebsites');
+var pinterestBMHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
+var cacheManager = require('dw/system/CacheMgr');
+var PinterestLogger = require('*/cartridge/scripts/helpers/pinterest/pinterestLogger');
+var pinterestLoggingHelper = new PinterestLogger();
 var packageJSON = require('../../package.json');
-var pinterestLogger = Logger.getLogger('pinterest', 'pinterest');
 var siteCurrent = Site.getCurrent();
 var pinterestAppID = siteCurrent.getCustomPreferenceValue('pinterestAppID');
 var businessAccountConfig = pinterestBMHelpers.getBusinessAccountConfig();
@@ -44,6 +41,9 @@ var languageMapping = {
 }
 
 function verifyAllDomains() {
+    pinterestLoggingHelper.logInfo("Claiming domains");
+    var pinterestUserWebsitesModel = require('*/cartridge/models/pinterest/userWebsites');
+    var pinterestUserWebsitesService = require('*/cartridge/scripts/services/pinterestUserWebsites');
     var allSites = pinterestUserWebsitesModel.getAllSites().allSitesData;
     var result = {
         success: true,
@@ -58,11 +58,14 @@ function verifyAllDomains() {
             });
 
             if (!resultWebsites.ok) {
-                pinterestLogger.error('Pinterest error: Domain Claiming ' + resultWebsites.msg + ' - ' + resultWebsites.errorMessage);
+                pinterestLoggingHelper.logErrorFromAPIResponse('Domain Claiming - Verify,', resultWebsites);
                 result.success = false;
                 result.failedWebsites.push(allSites[i].urlPart);
             }
         }
+    }
+    if (result.success) {
+        pinterestLoggingHelper.logInfo("Success claiming domains");
     }
 
     return result;
@@ -87,9 +90,15 @@ function handleConnectionCallback(httpParameterMap) {
         warnMessages: [],
         warnWebsites: []
     };
+    var errorMessage;
 
     try {
-        //decode url data
+        // refresh custom caches
+        var cache = cacheManager.getCache('CacheForBaseCode');
+        var cacheKey = 'pinterest/BaseCode:' + Site.getCurrent().getID();
+        cache.invalidate(cacheKey);
+        // decode url data
+        pinterestLoggingHelper.logInfo('Pinterest connection: decoding URL data');
         if (
             paramInfo
             && paramTokenData
@@ -108,12 +117,14 @@ function handleConnectionCallback(httpParameterMap) {
         } else {
             viewData.error = true;
             viewData.errorID = 'GENERIC';
-            viewData.errorMessage = Resource.msg('error.callback', 'pinterestbm', null);
-            pinterestLogger.error('Pinterest error: Account configuration callback failed, unexpected data returned from callback before parsing.');
+            errorMessage = Resource.msg('error.callbackFailed', 'pinterestbm', null) + ' ' + Resource.msg('error.callbackUnexpectedData', 'pinterestbm', null);
+            viewData.errorMessage = errorMessage + ' ' + Resource.msg('error.callback', 'pinterestbm', null);
+            pinterestLoggingHelper.logError('Pinterest error: ' + errorMessage);
         }
 
         // save the url data to custom preferences
         // if this fails error out
+        pinterestLoggingHelper.logInfo('Pinterest connection: saving URL data');
         if (
             !viewData.error
             && paramInfo.merchant_id
@@ -137,15 +148,24 @@ function handleConnectionCallback(httpParameterMap) {
         } else {
             viewData.error = true;
             viewData.errorID = 'GENERIC';
-            viewData.errorMessage = Resource.msg('error.callback', 'pinterestbm', null);
-            pinterestLogger.error('Pinterest error: Account configuration callback failed, unexpected data returned from callback after parsing.');
+            errorMessage = Resource.msg('error.callbackFailed', 'pinterestbm', null) + ' ' + Resource.msg('error.callbackUnexpectedData', 'pinterestbm', null);
+            viewData.errorMessage = errorMessage + ' ' + Resource.msg('error.callback', 'pinterestbm', null);
+            pinterestLoggingHelper.logError('Pinterest error: ' + errorMessage);
         }
 
         // save custom object data
         // if this fails error out
+        pinterestLoggingHelper.logInfo('Pinterest connection: saving custom object data');
         var businessAccountConfig = null;
         if (!viewData.error) {
-            var setBusinessAccountConfigResult = pinterestBMHelpers.setBusinessAccountConfig(pinterestAppID, pinterestConfigurationData);
+            setBusinessAccountConfigResult = false;
+            try {
+                pinterestBMHelpers.setBusinessAccountConfig(pinterestAppID, pinterestConfigurationData);
+                setBusinessAccountConfigResult = true;
+            } catch (e) {
+                pinterestLoggingHelper.logError('Account configuration save failed: ' + ((e && e.message)? e.message : 'unknown error'));
+            }
+            
 
             if (!setBusinessAccountConfigResult) {
                 viewData.error = true;
@@ -157,11 +177,11 @@ function handleConnectionCallback(httpParameterMap) {
 
         // link the integration
         // if this fails error out
+        pinterestLoggingHelper.logInfo('Pinterest connection: linking integration');
         if (!viewData.error && businessAccountConfig != null) {
             var feature_flags = businessAccountConfig.info.feature_flags;
             feature_flags.GDPR = siteCurrent.getCustomPreferenceValue('pinterestEnabledGDPR');
             feature_flags.LDP = siteCurrent.getCustomPreferenceValue('pinterestEnabledLDP');
-            feature_flags.real_time_updates = siteCurrent.getCustomPreferenceValue('pinterestEnabledRealtimeCatalogCalls');
             var payload = {
                 action: 'add',
                 connected_merchant_id: businessAccountConfig.info.merchant_id,
@@ -181,12 +201,14 @@ function handleConnectionCallback(httpParameterMap) {
             if (!resultIntegration.ok) {
                 viewData.error = true;
                 viewData.errorID = 'GENERIC';
-                viewData.errorMessage = Resource.msg('error.callback', 'pinterestbm', null);
-                pinterestLogger.error('Pinterest error: ' + resultIntegration.msg + ' - ' + resultIntegration.errorMessage);
+                errorMessage = resultIntegration.msg + ' - ' + resultIntegration.errorMessage.slice(1, -1);
+                viewData.errorMessage = errorMessage + ' ' + Resource.msg('error.callback', 'pinterestbm', null);
+                pinterestLoggingHelper.logError('Pinterest error: ' + errorMessage);
             }
         }
 
         // Update settings
+        pinterestLoggingHelper.logInfo('Pinterest connection: updating settings');
         if (!viewData.error && businessAccountConfig.info.feature_flags != null) {
             var flags = businessAccountConfig.info.feature_flags;
 
@@ -212,6 +234,7 @@ function handleConnectionCallback(httpParameterMap) {
 
         //get the meta tag verification code
         // if this fails just warn
+        pinterestLoggingHelper.logInfo('Pinterest connection: getting meta tag verification code');
         if (!viewData.error) {
             var resultVerification = pinterestVerificationService.call(businessAccountConfig);
 
@@ -219,7 +242,7 @@ function handleConnectionCallback(httpParameterMap) {
                 viewData.warn = true;
                 viewData.warnIDs.push('ERROR_DOMAIN_CLAIMING');
                 viewData.warnMessages.push(Resource.msg('error.domainverificationfailedkey', 'pinterestbm', null));
-                pinterestLogger.error('Pinterest error: ' + resultVerification.msg + ' - ' + resultVerification.errorMessage);
+                pinterestLoggingHelper.logErrorFromAPIResponse('GET verification code', resultVerification);
             } else {
                 var resultVerificationObject = JSON.parse(resultVerification.object);
 
@@ -229,10 +252,18 @@ function handleConnectionCallback(httpParameterMap) {
             }
         }
 
+        pinterestLoggingHelper.logInfo('Pinterest connection: saving custom object data again');
         //save custom object data again now that we have verification data
         // if this fails error out
         if (!viewData.error) {
-            var setBusinessAccountConfigResult = pinterestBMHelpers.setBusinessAccountConfig(pinterestAppID, businessAccountConfig);
+            var setBusinessAccountConfigResult;
+            try {
+                pinterestBMHelpers.setBusinessAccountConfig(pinterestAppID, businessAccountConfig);
+                setBusinessAccountConfigResult = true;
+            } catch (e){
+                pinterestLoggingHelper.logError('Account configuration save failed: ' + ((e && e.message)? e.message : 'unknown error'));
+                setBusinessAccountConfigResult = false;
+            }
 
             if (!setBusinessAccountConfigResult) {
                 viewData.error = true;
@@ -243,6 +274,7 @@ function handleConnectionCallback(httpParameterMap) {
 
         //verify all the domains
         // if this fails just warn
+        pinterestLoggingHelper.logInfo("Pinterest connection: verifying all domains");
         if (!viewData.error) {
             var verifyAllDomainsResult = verifyAllDomains();
 
@@ -256,10 +288,11 @@ function handleConnectionCallback(httpParameterMap) {
     } catch (e) {
         viewData.error = true;
         viewData.errorID = 'GENERIC';
-        viewData.errorMessage = Resource.msg('error.callback', 'pinterestbm', null);
-        pinterestLogger.error('Pinterest error: Account configuration callback failed, ' + ((e && e.message)? e.message : 'unknown error'));
+        errorMessage = Resource.msg('error.callbackFailed', 'pinterestbm', null) + ((e && e.message)? e.message : 'unknown error');
+        viewData.errorMessage = errorMessage + ' ' + Resource.msg('error.callback', 'pinterestbm', null);
+        pinterestLoggingHelper.logError('Pinterest error: ' + errorMessage);
     }
-
+    pinterestLoggingHelper.flushLogCache();
     viewData.pinterestBaseUrl = siteCurrent.getCustomPreferenceValue('pinterestIntegrationBaseURL');
 
     return viewData;
@@ -270,6 +303,7 @@ function handleConnectionCallback(httpParameterMap) {
  * @returns {Object} - view data
  */
 function handleDisconnection() {
+
     var viewData = {
         error: false,
         errorID: '',
@@ -278,12 +312,12 @@ function handleDisconnection() {
         successMessage: ''
     };
 
-    var pinterestUserWebsitesService = require('*/cartridge/scripts/services/pinterestUserWebsites');
     var pinterestCatalogFeedsService = require('*/cartridge/scripts/services/pinterestCatalogFeeds');
-    var pinterestUserWebsitesModel = require('*/cartridge/models/pinterest/userWebsites');
     var pinterestCatalogFeedsModel = require('*/cartridge/models/pinterest/catalogFeeds');
 
     try {
+        pinterestLoggingHelper.logInfo('Disconnecting Pinterest account');
+        pinterestBMHelpers.clearErrorsPinterestConfig();
         //remove catalogs
         pinterestCatalogFeedsModel.getCatalogIDs().forEach(function (id) {
             var resultCatalog = pinterestCatalogFeedsService.call({
@@ -293,42 +327,43 @@ function handleDisconnection() {
 
             //error check
             if (!resultCatalog.ok) {
-                viewData.error = true;
-                viewData.errorID = 'ERROR_DISCONNECT';
-                viewData.errorMessage = Resource.msg('error.disconnectfailure', 'pinterestbm', null);
-                pinterestLogger.error('Pinterest error: Disconnect Failed, Catalog Feeds,' + resultCatalog.msg + ' - ' + resultCatalog.errorMessage);
+                var errorData = {
+                    'message': resultCatalog.errorMessage
+                }
+                pinterestBMHelpers.addErrorPinterestConfig('ERROR_DELETE_CATALOG_FEED', errorData);
+                pinterestLoggingHelper.logError('Pinterest error: Disconnect Failed, Catalog Feeds,' + resultCatalog.msg + ' - ' + resultCatalog.errorMessage);
             }
         });
 
         //disconnect integration
-        if (!viewData.error) {
-            var pinterestIntegrationService = require('*/cartridge/scripts/services/pinterestIntegration');
-            var resultIntegration = pinterestIntegrationService.call({
-                action: 'delete',
-                external_business_id: pinterestBMHelpers.getExternalBusinessID(businessAccountConfig.info.advertiser_id, siteCurrent)
-            });
+        var pinterestIntegrationService = require('*/cartridge/scripts/services/pinterestIntegration');
+        var resultIntegration = pinterestIntegrationService.call({
+            action: 'delete',
+            external_business_id: pinterestBMHelpers.getExternalBusinessID(businessAccountConfig.info.advertiser_id, siteCurrent)
+        });
 
-            if (!resultIntegration.ok) {
-                viewData.error = true;
-                viewData.errorID = 'ERROR_DISCONNECT';
-                viewData.errorMessage = Resource.msg('error.callback', 'pinterestbm', null);
-                pinterestLogger.error('Pinterest error: ' + resultIntegration.msg + ' - ' + resultIntegration.errorMessage);
-            }
+        if (!resultIntegration.ok) {
+            viewData.error = true;
+            viewData.errorID = 'ERROR_DISCONNECT';
+            var integrationMsg = resultIntegration.msg + ' - ' + resultIntegration.errorMessage;
+            viewData.errorMessage = integrationMsg + ' ' + Resource.msg('error.callback', 'pinterestbm', null);
+            pinterestLoggingHelper.logError('Pinterest error: ' + integrationMsg);
         }
+
+        pinterestLoggingHelper.logInfo('Successs disconnecting Pinterest account'); // log before deleting access token
+        pinterestLoggingHelper.flushLogCache();
 
         //remove stored data
         pinterestBMHelpers.setBusinessAccountConfig(pinterestAppID, {});
-        if (!viewData.error) {
-            viewData.success = true;
-            viewData.successMessage = Resource.msg('success.disconnectsuccess', 'pinterestbm', null);
-        }
+        viewData.success = true;
+        viewData.successMessage = Resource.msg('success.disconnectsuccess', 'pinterestbm', null);
+
     } catch (e) {
         viewData.error = true;
         viewData.errorID = 'ERROR_DISCONNECT';
         viewData.errorMessage = Resource.msg('error.disconnectfailure', 'pinterestbm', null);
-        pinterestLogger.error('Pinterest error: Account disconnect failed, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLoggingHelper.logError('Pinterest error: Account disconnect failed, ' + ((e && e.message)? e.message : 'unknown error'));
     }
-
     return viewData;
 }
 
@@ -408,6 +443,7 @@ server.get('Start', server.middleware.https, function (req, res, next) {
             }
         }
 
+        viewData.errors = JSON.stringify(pinterestBMHelpers.getErrorsPinterestConfig());
         res.render('/pinterest/connect', viewData);
     }
 
@@ -415,6 +451,8 @@ server.get('Start', server.middleware.https, function (req, res, next) {
 });
 
 server.get('Domain', server.middleware.https, function (req, res, next) {
+    var pinterestUserWebsitesModel = require('*/cartridge/models/pinterest/userWebsites');
+    var pinterestUserWebsitesService = require('*/cartridge/scripts/services/pinterestUserWebsites');
     var httpParameterMap = request.getHttpParameterMap();
     var viewData = {
         error: false,
@@ -440,11 +478,11 @@ server.get('Domain', server.middleware.https, function (req, res, next) {
                     viewData.error = true;
                     viewData.errorID = 'GENERIC';
                     viewData.errorMessage = Resource.msg('error.domainverificationfailed', 'pinterestbm', null);
-                    pinterestLogger.error('Pinterest error: Domain Claiming, ' + resultWebsites.msg + ' - ' + resultWebsites.errorMessage);
+                    pinterestLoggingHelper.logErrorFromAPIResponse('Domain Claiming - Verify', resultWebsites);
                 }
             //unverify 1 domain
             } else if (httpParameterMap.unverifyDomain.value) {
-                var resultWebsites = pinterestUserWebsitesService.call({
+                resultWebsites = pinterestUserWebsitesService.call({
                     action: 'unverify',
                     website: httpParameterMap.unverifyDomain.value
                 });
@@ -452,7 +490,7 @@ server.get('Domain', server.middleware.https, function (req, res, next) {
                 if (!resultWebsites.ok) {
                     viewData.error = true;
                     viewData.errorMessage = Resource.msg('error.domainverificationfailed', 'pinterestbm', null);
-                    pinterestLogger.error('Pinterest error: Domain Claiming, ' + resultWebsites.msg + ' - ' + resultWebsites.errorMessage);
+                    pinterestLoggingHelper.logErrorFromAPIResponse('Domain Claiming - Unverify', resultWebsites);
                 }
             //verify all domains
             } else if (httpParameterMap.verifyAll.value && httpParameterMap.verifyAll.booleanValue === true) {
@@ -471,15 +509,16 @@ server.get('Domain', server.middleware.https, function (req, res, next) {
             viewData.error = true;
             viewData.errorID = 'GENERIC';
             viewData.errorMessage = Resource.msg('text.domainverificationdisabled', 'pinterestbm', null);
-            pinterestLogger.error('Pinterest error: Domain Claiming failed, missing app connection');
+            pinterestLoggingHelper.logError('Pinterest error: Domain Claiming failed, missing app connection');
         }
     } catch (e) {
         viewData.error = true;
         viewData.errorID = 'GENERIC';
         viewData.errorMessage = Resource.msg('error.domainverificationfailed', 'pinterestbm', null);
-        pinterestLogger.error('Pinterest error: Domain verification failed, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLoggingHelper.logError('Pinterest error: Domain verification failed, ' + ((e && e.message)? e.message : 'unknown error'));
     }
 
+    pinterestLoggingHelper.flushLogCache();
     res.render('/pinterest/domains', viewData);
 
     return next();

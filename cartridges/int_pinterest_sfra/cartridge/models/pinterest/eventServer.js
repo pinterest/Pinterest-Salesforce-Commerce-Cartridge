@@ -2,7 +2,7 @@
 
 // https://developers.pinterest.com/docs/api/v5/#operation/events/create
 
-var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
 var Site = require('dw/system/Site');
 
 /**
@@ -51,25 +51,31 @@ function getEvent(pdict, eventName) {
     module.exports.methods.getPartnerName(eventData, pdict);
     module.exports.methods.getNP(eventData['custom_data'], pdict);
     module.exports.methods.getSearchString(eventData['custom_data'], pdict);
+    module.exports.methods.getCategoryString(eventData['custom_data'], pdict);
     module.exports.methods.getValue(eventData['custom_data'], pdict);
     module.exports.methods.getOrderID(eventData['custom_data'], pdict);
 
     var products;
-    if (pdict.items && pdict.items.length) {
-        products = pdict.items.toArray();
-    } else if (pdict.cart && pdict.cart.items) {
-        products = pdict.cart.items;
-    } else if (pdict.order && pdict.order.items && pdict.order.items.items) {
-        products = pdict.order.items.items;
-    } else if (pdict.product) {
-        products = [pdict.product];
-    }
-
-    if (products && products.length) {
-        module.exports.methods.getContentIDs(eventData['custom_data'], products);
-        module.exports.methods.getContents(eventData['custom_data'], products);
-        module.exports.methods.getNumItems(eventData['custom_data'], products);
-        module.exports.methods.getCurrency(eventData['custom_data'], products[0]);
+    if (eventName === 'view_category') {
+        if (pdict.productSearch && pdict.productSearch.isCategorySearch) {
+            module.exports.methods.getContentIDs(eventData['custom_data'], pdict.productSearch.productIds);
+        }
+    } else {
+        if (pdict.items && pdict.items.length) {
+            products = pdict.items.toArray();
+        } else if (pdict.cart && pdict.cart.items) {
+            products = pdict.cart.items;
+        } else if (pdict.order && pdict.order.items && pdict.order.items.items) {
+            products = pdict.order.items.items;
+        } else if (pdict.product) {
+            products = [pdict.product];
+        }
+        if (products && products.length) {
+            module.exports.methods.getContentIDs(eventData['custom_data'], products);
+            module.exports.methods.getContents(eventData['custom_data'], products);
+            module.exports.methods.getNumItems(eventData['custom_data'], products);
+            module.exports.methods.getCurrency(eventData['custom_data'], products[0]);
+        }
     }
 
     module.exports.methods.getUserAgent(eventData['user_data'], pdict);
@@ -134,7 +140,7 @@ function getEventID(eventData, pdict) {
  *
  * @returns {Object} - Decorated event data model
  */
-function getActionSource(eventData, pdict) {
+function getActionSource(eventData, pdict) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(eventData, 'action_source', {
         enumerable: true,
         value: 'web'
@@ -150,7 +156,7 @@ function getActionSource(eventData, pdict) {
  *
  * @returns {Object} - Decorated event data model
  */
-function getEventTime(eventData, pdict) {
+function getEventTime(eventData, pdict) {   // eslint-disable-line no-unused-vars
     Object.defineProperty(eventData, 'event_time', {
         enumerable: true,
         value: Math.round(new Date() / 1000)
@@ -184,7 +190,7 @@ function getEventSourceURL(eventData, pdict) {
  *
  * @returns {Object} - Decorated event data model
  */
-function getPartnerName(eventData, pdict) {
+function getPartnerName(eventData, pdict) { // eslint-disable-line no-unused-vars
     Object.defineProperty(eventData, 'partner_name', {
         enumerable: true,
         value: 'ss-salesforce'
@@ -200,7 +206,7 @@ function getPartnerName(eventData, pdict) {
  *
  * @returns {Object} - Decorated event data model
  */
-function getOptOut(eventData, pdict) {
+function getOptOut(eventData, pdict) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(eventData, 'opt_out', {
         enumerable: true,
         value: false
@@ -235,7 +241,7 @@ function getLanguage(eventData, pdict) {
  *
  * @returns {Object} - Decorated event user data model
  */
-function getUserAgent(userData, pdict) {
+function getUserAgent(userData, pdict) {    // eslint-disable-line no-unused-vars
     if (request && request.httpUserAgent) {
         Object.defineProperty(userData, 'client_user_agent', {
             enumerable: true,
@@ -253,7 +259,7 @@ function getUserAgent(userData, pdict) {
  *
  * @returns {Object} - Decorated event user data model
  */
-function getClientIPAddress(userData, pdict) {
+function getClientIPAddress(userData, pdict) {  // eslint-disable-line no-unused-vars
     if (request && request.httpRemoteAddress) {
         Object.defineProperty(userData, 'client_ip_address', {
             enumerable: true,
@@ -451,7 +457,7 @@ function getCity(userData, preferredAddress) {
     if (preferredAddress && preferredAddress.city) {
         Object.defineProperty(userData, 'ct', {
             enumerable: true,
-            value: [pinterestHelpers.getHashedData(preferredAddress.city.replace(/[^\w\s\']|_/g, "").replace(/\s+/g, " ").toLowerCase())]
+            value: [pinterestHelpers.getHashedData(preferredAddress.city.replace(/[^\w\s']|_/g, "").replace(/\s+/g, " ").toLowerCase())]
         });
     }
 
@@ -487,7 +493,7 @@ function getZip(userData, preferredAddress) {
     if (preferredAddress && preferredAddress.postalCode) {
         Object.defineProperty(userData, 'zp', {
             enumerable: true,
-            value: [pinterestHelpers.getHashedData(preferredAddress.postalCode.replace(/[^\w\s\']|_/g, "").replace(/\s+/g, " "))]
+            value: [pinterestHelpers.getHashedData(preferredAddress.postalCode.replace(/[^\w\s']|_/g, "").replace(/\s+/g, " "))]
         });
     }
 
@@ -513,7 +519,7 @@ function getCountry(userData, preferredAddress) {
 }
 
 /**
- * Decorate event user data with profile address information
+ * Decorate event user data
  * @param {Object} userData - event user data object to be decorated
  *
  * @returns {Object} - Decorated event user data model
@@ -531,13 +537,13 @@ function getLDP(userData) {
 }
 
 /**
- * Decorate event custom data with profile address information
+ * Decorate event custom data
  * @param {Object} customData - event custom data object to be decorated
  * @param {dw.system.PipelineDictionary} pdict - page view pdict
  *
  * @returns {Object} - Decorated event custom data model
  */
-function getNP(customData, pdict) {
+function getNP(customData, pdict) { // eslint-disable-line no-unused-vars
     Object.defineProperty(customData, 'np', {
         enumerable: true,
         value: 'ss-salesforce'
@@ -547,7 +553,7 @@ function getNP(customData, pdict) {
 }
 
 /**
- * Decorate event custom data with profile address information
+ * Decorate event custom data with user search data
  * @param {Object} customData - event custom data object to be decorated
  * @param {dw.system.PipelineDictionary} pdict - page view pdict
  *
@@ -558,6 +564,24 @@ function getSearchString(customData, pdict) {
         Object.defineProperty(customData, 'search_string', {
             enumerable: true,
             value: pdict.productSearch.searchKeywords
+        });
+    }
+
+    return customData;
+}
+
+/**
+ * Decorate event custom data with category search data
+ * @param {Object} customData - event custom data object to be decorated
+ * @param {dw.system.PipelineDictionary} pdict - page view pdict
+ *
+ * @returns {Object} - Decorated event custom data model
+ */
+function getCategoryString(customData, pdict) {
+    if (pdict.productSearch && pdict.productSearch.isCategorySearch) {
+        Object.defineProperty(customData, 'content_category', {
+            enumerable: true,
+            value: pdict.productSearch.category.id
         });
     }
 
@@ -603,6 +627,8 @@ function getContentIDs(customData, products) {
     for (var i = 0; i < products.length; i++) {
         if (products[i].id) {
             contentIDs.push(products[i].id);
+        } else if (products[i].productID) {
+            contentIDs.push(products[i].productID);
         }
     }
 
@@ -742,6 +768,7 @@ module.exports = {
         getNP: getNP,
         getLDP: getLDP,
         getSearchString: getSearchString,
+        getCategoryString: getCategoryString,
         getContentIDs: getContentIDs,
         getContents: getContents,
         getCurrency: getCurrency,

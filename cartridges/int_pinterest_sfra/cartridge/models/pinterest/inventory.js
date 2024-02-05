@@ -1,7 +1,7 @@
 'use strict';
 
 var ProductMgr = require('dw/catalog/ProductMgr');
-var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
 
 /**
  * Decorate event data with order product information
@@ -79,7 +79,7 @@ function getAPIPayload(locale) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductItemID(product, apiProduct, options) {
+function getProductItemID(product, apiProduct, options) {   // eslint-disable-line no-unused-vars
     if (apiProduct.ID) {
         Object.defineProperty(product, 'item_id', {
             enumerable: true,
@@ -98,7 +98,7 @@ function getProductItemID(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product attributes model
  */
-function getProductTitle(productAttributes, apiProduct, options) {
+function getProductTitle(productAttributes, apiProduct, options) {  // eslint-disable-line no-unused-vars
     if (apiProduct.name) {
         Object.defineProperty(productAttributes, 'title', {
             enumerable: true,
@@ -117,7 +117,7 @@ function getProductTitle(productAttributes, apiProduct, options) {
  *
  * @returns {Object} - Decorated product attributes model
  */
-function getProductDescription(productAttributes, apiProduct, options) {
+function getProductDescription(productAttributes, apiProduct, options) {    // eslint-disable-line no-unused-vars
     if (apiProduct.shortDescription && apiProduct.shortDescription.source) {
         var shortDescription = pinterestHelpers.stripHTML(apiProduct.shortDescription.source);
 

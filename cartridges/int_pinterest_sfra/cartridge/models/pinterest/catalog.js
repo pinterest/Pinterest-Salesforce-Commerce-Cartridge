@@ -1,13 +1,9 @@
 'use strict';
 
 var Site = require('dw/system/Site');
-var CatalogMgr = require('dw/catalog/CatalogMgr');
-var Logger = require('dw/system/Logger');
-var decorators = require('*/cartridge/models/product/decorators/index');
 var URLUtils = require('dw/web/URLUtils');
 var priceFactory = require('*/cartridge/scripts/factories/price');
-var ImageModel = require('*/cartridge/models/product/productImages');
-var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelpers');
+var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
 
 /**
  * Decorate product with full product information
@@ -74,7 +70,7 @@ function getProduct(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductTitle(product, apiProduct, options) {
+function getProductTitle(product, apiProduct, options) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'title', {
         enumerable: true,
         value: apiProduct.name
@@ -91,7 +87,7 @@ function getProductTitle(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductBrand(product, apiProduct, options) {
+function getProductBrand(product, apiProduct, options) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'brand', {
         enumerable: true,
         value: apiProduct.brand
@@ -108,7 +104,7 @@ function getProductBrand(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductID(product, apiProduct, options) {
+function getProductID(product, apiProduct, options) {   // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'id', {
         enumerable: true,
         value: apiProduct.ID
@@ -168,7 +164,7 @@ function getProductPrice(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductDescription(product, apiProduct, options) {
+function getProductDescription(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'description', {
         enumerable: true,
         value: (apiProduct.shortDescription && apiProduct.shortDescription.source) ? pinterestHelpers.stripHTML(apiProduct.shortDescription.source) : null
@@ -185,7 +181,7 @@ function getProductDescription(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductDescriptionHTML(product, apiProduct, options) {
+function getProductDescriptionHTML(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'description_html', {
         enumerable: true,
         value: apiProduct.longDescription ? apiProduct.longDescription.markup : null
@@ -297,7 +293,7 @@ function getProductAvailability(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductLink(product, apiProduct, options) {
+function getProductLink(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     var link;
 
     if (product.id) {
@@ -320,7 +316,7 @@ function getProductLink(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductMobileLink(product, apiProduct, options) {
+function getProductMobileLink(product, apiProduct, options) {   // eslint-disable-line no-unused-vars
     var mobileLink;
 
     if (product.id) {
@@ -343,7 +339,7 @@ function getProductMobileLink(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductAverageReviewRating(product, apiProduct, options) {
+function getProductAverageReviewRating(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'average_review_rating', {
         enumerable: true,
         value: null
@@ -360,7 +356,7 @@ function getProductAverageReviewRating(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductNumberOfRatings(product, apiProduct, options) {
+function getProductNumberOfRatings(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'number_of_ratings', {
         enumerable: true,
         value: null
@@ -377,7 +373,7 @@ function getProductNumberOfRatings(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductNumberOfReviews(product, apiProduct, options) {
+function getProductNumberOfReviews(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'number_of_reviews', {
         enumerable: true,
         value: null
@@ -394,7 +390,7 @@ function getProductNumberOfReviews(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductType(product, apiProduct, options) {
+function getProductType(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'product_type', {
         enumerable: true,
         value: null
@@ -411,7 +407,7 @@ function getProductType(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductGTIN(product, apiProduct, options) {
+function getProductGTIN(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'GTIN', {
         enumerable: true,
         value: apiProduct.UPC ? apiProduct.UPC : null
@@ -428,7 +424,7 @@ function getProductGTIN(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductItemGroupID(product, apiProduct, options) {
+function getProductItemGroupID(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     var itemGroupID = null;
 
     if (apiProduct.variant && apiProduct.masterProduct && apiProduct.masterProduct.ID) {
@@ -453,7 +449,7 @@ function getProductItemGroupID(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductMPN(product, apiProduct, options) {
+function getProductMPN(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'mpn', {
         enumerable: true,
         value: apiProduct.manufacturerSKU ? apiProduct.manufacturerSKU : null
@@ -470,7 +466,7 @@ function getProductMPN(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductAgeGroup(product, apiProduct, options) {
+function getProductAgeGroup(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'age_group', {
         enumerable: true,
         value: null
@@ -487,7 +483,7 @@ function getProductAgeGroup(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductAltText(product, apiProduct, options) {
+function getProductAltText(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'alt_text', {
         enumerable: true,
         value: null
@@ -504,7 +500,7 @@ function getProductAltText(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductColor(product, apiProduct, options) {
+function getProductColor(product, apiProduct, options) {    // eslint-disable-line no-unused-vars
     var color = null;
 
     if (apiProduct.custom && apiProduct.custom.refinementColor && apiProduct.custom.refinementColor.displayValue) {
@@ -529,7 +525,7 @@ function getProductColor(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductGender(product, apiProduct, options) {
+function getProductGender(product, apiProduct, options) {   // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'gender', {
         enumerable: true,
         value: null
@@ -546,7 +542,7 @@ function getProductGender(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductMaterial(product, apiProduct, options) {
+function getProductMaterial(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'material', {
         enumerable: true,
         value: null
@@ -563,7 +559,7 @@ function getProductMaterial(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductPattern(product, apiProduct, options) {
+function getProductPattern(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'pattern', {
         enumerable: true,
         value: null
@@ -580,7 +576,7 @@ function getProductPattern(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductSize(product, apiProduct, options) {
+function getProductSize(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'size', {
         enumerable: true,
         value: (apiProduct.custom && apiProduct.custom.size)? apiProduct.custom.size : null
@@ -597,7 +593,7 @@ function getProductSize(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductSizeSystem(product, apiProduct, options) {
+function getProductSizeSystem(product, apiProduct, options) {   // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'size_system', {
         enumerable: true,
         value: null
@@ -614,7 +610,7 @@ function getProductSizeSystem(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductSizeType(product, apiProduct, options) {
+function getProductSizeType(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'size_type', {
         enumerable: true,
         value: null
@@ -631,7 +627,7 @@ function getProductSizeType(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductVariantNamesValues(product, apiProduct, options) {
+function getProductVariantNamesValues(product, apiProduct, options) {   // eslint-disable-line no-unused-vars
     var enabledVariantIDs = ['size', 'color'];
     var variantNames = [];
     var variantValues = [];
@@ -690,7 +686,7 @@ function getProductVariantNamesValues(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductFreeShippingLabel(product, apiProduct, options) {
+function getProductFreeShippingLabel(product, apiProduct, options) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'free_shipping_label', {
         enumerable: true,
         value: null
@@ -707,7 +703,7 @@ function getProductFreeShippingLabel(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductFreeShippingLimit(product, apiProduct, options) {
+function getProductFreeShippingLimit(product, apiProduct, options) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'free_shipping_limit', {
         enumerable: true,
         value: null
@@ -724,7 +720,7 @@ function getProductFreeShippingLimit(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductShipping(product, apiProduct, options) {
+function getProductShipping(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'shipping', {
         enumerable: true,
         value: null
@@ -741,7 +737,7 @@ function getProductShipping(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductShippingHeight(product, apiProduct, options) {
+function getProductShippingHeight(product, apiProduct, options) {   // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'shipping_height', {
         enumerable: true,
         value: null
@@ -758,7 +754,7 @@ function getProductShippingHeight(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductShippingWeight(product, apiProduct, options) {
+function getProductShippingWeight(product, apiProduct, options) {   // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'shipping_weight', {
         enumerable: true,
         value: null
@@ -775,7 +771,7 @@ function getProductShippingWeight(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductShippingWidth(product, apiProduct, options) {
+function getProductShippingWidth(product, apiProduct, options) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'shipping_width', {
         enumerable: true,
         value: null
@@ -792,7 +788,7 @@ function getProductShippingWidth(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductTax(product, apiProduct, options) {
+function getProductTax(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'tax', {
         enumerable: true,
         value: null
@@ -809,7 +805,7 @@ function getProductTax(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductAdult(product, apiProduct, options) {
+function getProductAdult(product, apiProduct, options) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'adult', {
         enumerable: true,
         value: null
@@ -826,7 +822,7 @@ function getProductAdult(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductCheckoutEnabled(product, apiProduct, options) {
+function getProductCheckoutEnabled(product, apiProduct, options) {  // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'checkout_enabled', {
         enumerable: true,
         value: null
@@ -843,7 +839,7 @@ function getProductCheckoutEnabled(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductCustomLabel0(product, apiProduct, options) {
+function getProductCustomLabel0(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'custom_label_0', {
         enumerable: true,
         value: null
@@ -860,7 +856,7 @@ function getProductCustomLabel0(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductCustomLabel1(product, apiProduct, options) {
+function getProductCustomLabel1(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'custom_label_1', {
         enumerable: true,
         value: null
@@ -877,7 +873,7 @@ function getProductCustomLabel1(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductCustomLabel2(product, apiProduct, options) {
+function getProductCustomLabel2(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'custom_label_2', {
         enumerable: true,
         value: null
@@ -894,7 +890,7 @@ function getProductCustomLabel2(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductCustomLabel3(product, apiProduct, options) {
+function getProductCustomLabel3(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'custom_label_3', {
         enumerable: true,
         value: null
@@ -911,7 +907,7 @@ function getProductCustomLabel3(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductCustomLabel4(product, apiProduct, options) {
+function getProductCustomLabel4(product, apiProduct, options) { // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'custom_label_4', {
         enumerable: true,
         value: null
@@ -928,7 +924,7 @@ function getProductCustomLabel4(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductAdLink(product, apiProduct, options) {
+function getProductAdLink(product, apiProduct, options) {   // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'ad_link', {
         enumerable: true,
         value: null
@@ -945,7 +941,7 @@ function getProductAdLink(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductCondition(product, apiProduct, options) {
+function getProductCondition(product, apiProduct, options) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'condition', {
         enumerable: true,
         value: 'new'
@@ -962,7 +958,7 @@ function getProductCondition(product, apiProduct, options) {
  *
  * @returns {Object} - Decorated product model
  */
-function getProductGoogleProductCategory(product, apiProduct, options) {
+function getProductGoogleProductCategory(product, apiProduct, options) {    // eslint-disable-line no-unused-vars
     Object.defineProperty(product, 'google_product_category', {
         enumerable: true,
         value: null

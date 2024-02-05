@@ -11,7 +11,7 @@ function getAttributes(object, apiProduct) {
 
     // if variant, get its master which as the categories defined on it
     if (apiProduct.isVariant()) {
-        var categorizedProduct = apiProduct.getVariationModel().getMaster();
+        categorizedProduct = apiProduct.getVariationModel().getMaster();
     }
 
     // first try to get the default category

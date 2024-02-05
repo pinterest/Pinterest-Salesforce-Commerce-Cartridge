@@ -39,6 +39,13 @@
                             }],
                             }
                         }, '${pdict.pinterestBaseUrl}');
+                    <iselseif condition="${pdict.errors}">
+                        document.getElementById('pinterestbm-iframe').contentWindow.postMessage({
+                            type: 'integrationErrors',
+                            payload: {
+                                errors: <isprint value="${pdict.errors}" encoding="off"/>,
+                            }
+                        }, '${pdict.pinterestBaseUrl}');
                     </isif>
                 }
 

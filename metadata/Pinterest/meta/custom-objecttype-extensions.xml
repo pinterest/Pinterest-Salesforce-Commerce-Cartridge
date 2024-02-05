@@ -36,6 +36,13 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
+            <attribute-definition attribute-id="errors">
+                <display-name xml:lang="x-default">Set of error payloads generated in SFCC</display-name>
+                <type>set-of-string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
         </attribute-definitions>
         <group-definitions>
             <attribute-group group-id="pinterestConfigurations">
@@ -47,6 +54,7 @@
                 <attribute attribute-id="accessToken"/>
                 <attribute attribute-id="refreshToken"/>
                 <attribute attribute-id="catalogOutOfStock"/>
+                <attribute attribute-id="errors"/>
             </attribute-group>
         </group-definitions>
     </custom-type>

@@ -1,9 +1,11 @@
+'use strict';
+
 //https://developers.pinterest.com/docs/api/v5/
 
-module.exports = require('dw/svc/LocalServiceRegistry').createService('pinterest.conversion', {
+module.exports = require('dw/svc/LocalServiceRegistry').createService('pinterest.logging', {
     /**
      * Create the service request
-     * - Set request method to be the HTTP GET method
+     * - Set request method to be the HTTP POST method
      * - Construct request URL
      * - Append the request HTTP query string as a URL parameter
      *
@@ -11,11 +13,10 @@ module.exports = require('dw/svc/LocalServiceRegistry').createService('pinterest
      * @param {Object} params - Additional paramaters
      * @returns {void}
      */
-    createRequest: function (svc, data) {
-        var pinterestHelpers = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
-        var businessAccountConfig = pinterestHelpers.getBusinessAccountConfig();
-        var url = svc.getURL() + '/' + businessAccountConfig.info.advertiser_id + '/events';
-
+    createRequest: function (svc, data){
+        var pinterestHelper = require('*/cartridge/scripts/helpers/pinterest/pinterestHelper');
+        var businessAccountConfig = pinterestHelper.getBusinessAccountConfig();
+        var url = svc.getURL();
         svc.addHeader('charset', 'UTF-8');
         svc.addHeader('Content-type', 'application/json');
         svc.addHeader('Authorization', 'Bearer ' + businessAccountConfig.tokenData.access_token);
@@ -24,9 +25,7 @@ module.exports = require('dw/svc/LocalServiceRegistry').createService('pinterest
         svc.setURL(url);
 
         if (data) {
-            data = JSON.stringify({
-                data: [data]
-            });
+            data = JSON.stringify(data);
 
             return data;
         }
@@ -44,11 +43,17 @@ module.exports = require('dw/svc/LocalServiceRegistry').createService('pinterest
         return client.text;
     },
 
-    getRequestLogMessage: function () {
-        var reqLogMsg = 'sending payload';
-        return reqLogMsg;
+    /**
+     * @param {dw.system.Request} request
+     */
+    getRequestLogMessage: function (request) {
+        return request.toString();
     },
 
-    getResponseLogMessage: function () {}
-
+    /**
+     * @param {dw.system.Response} response
+     */
+    getResponseLogMessage: function (response) {
+        return response.toString();
+    }
 });
