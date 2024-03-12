@@ -362,7 +362,7 @@ function refreshAccessToken(businessAccountConfig) {
         var pinterestOAuthService = require('*/cartridge/scripts/services/pinterestOAuth');
         var nowSeconds = (Math.floor(new Date().getTime()/1000));
         var pinterestAppID = Site.getCurrent().getCustomPreferenceValue('pinterestAppID');
-        var bufferSeconds = Site.getCurrent().getCustomPreferenceValue('pinterestRefreshTokenExpirationBuffer') * 86400;
+        var bufferSeconds = 15*86400; // 15 days in seconds;
 
         // check if we are in range of both token expirations
         if (
