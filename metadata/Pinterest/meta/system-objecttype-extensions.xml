@@ -74,14 +74,6 @@
                 <min-length>0</min-length>
                 <default-value>large</default-value>
             </attribute-definition>
-            <attribute-definition attribute-id="pinterestRefreshTokenExpirationBuffer">
-                <display-name xml:lang="x-default">Pinterest Refresh Token Expiration Buffer Days</display-name>
-                <description xml:lang="x-default">How may days after a token is created or updated should it be refreshed. Default is 15 days.</description>
-                <type>int</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <default-value>15</default-value>
-            </attribute-definition>
             <attribute-definition attribute-id="pinterestLoggingFlag">
                 <display-name xml:lang="x-default">Pinterest Logging Enabled</display-name>
                 <description xml:lang="x-default">Enable debug logs from Pinterest cartridge(s) to be sent to Pinterest API.</description>
@@ -112,7 +104,6 @@
                 <attribute attribute-id="pinterestWebDAVUser"/>
                 <attribute attribute-id="pinterestWebDAVPassword"/>
                 <attribute attribute-id="pinterestCatalogFeedProductImageSize"/>
-                <attribute attribute-id="pinterestRefreshTokenExpirationBuffer"/>
                 <attribute attribute-id="pinterestIntegrationBaseURL"/>
             </attribute-group>
         </group-definitions>

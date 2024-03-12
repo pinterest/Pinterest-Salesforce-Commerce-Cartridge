@@ -58,9 +58,13 @@ function verifyAllDomains() {
             });
 
             if (!resultWebsites.ok) {
-                pinterestLoggingHelper.logErrorFromAPIResponse('Domain Claiming - Verify,', resultWebsites);
+                var errorMessageAsJSON = resultWebsites.errorMessage? JSON.parse(resultWebsites.errorMessage): null;
+
                 result.success = false;
-                result.failedWebsites.push(allSites[i].urlPart);
+                result.failedWebsites.push({
+                    website: allSites[i].urlPart,
+                    errorCode: errorMessageAsJSON && errorMessageAsJSON.code ? errorMessageAsJSON.code : null,
+                });
             }
         }
     }

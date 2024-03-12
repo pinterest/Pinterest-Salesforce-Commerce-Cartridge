@@ -41,7 +41,7 @@
                         && window.opener.parent.document
                     ) {
                     <isloop items=${pdict.warnIDs} var="warnID" status="loopStatus">
-                        <isloop items=${pdict.warnWebsites[loopStatus.index]} var="website">
+                         <isloop items=${pdict.warnWebsites[loopStatus.index]} var="websiteObject">
                             window.opener.parent.document.getElementById('pinterestbm-iframe').contentWindow.postMessage({
                                 type: 'integrationErrors',
                                 payload: {
@@ -49,7 +49,8 @@
                                     'integration_error_id': '${pdict.warnIDs[loopStatus.index]}',
                                     'data': {
                                         'message': '${pdict.warnMessages[loopStatus.index]}',
-                                        'website': '${website}'
+                                        'website': '${websiteObject.website}',
+                                        'errorCode': '${websiteObject.errorCode}'
                                     },
                                 }],
                                 }

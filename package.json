@@ -1,6 +1,6 @@
 {
   "name": "link_pinterest",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "description": "Pinterest LINK Cartridge",
   "license": "Apache-2.0",
   "main": "index.js",
