@@ -11,7 +11,7 @@ For instructions please refer to `documentation` folder.
 
 ## Features
 * Simple to install and configure in just a few steps 
-* Conversion Tracking: Track conversions using the frontend JavaScript and backend API tracking. API for Conversions installation outside of this app can take 2-4 weeks. With this app it will be implemented in ~30 minutes.
+* Conversion Tracking: Track conversions using the frontend JavaScript and backend API tracking. Conversions API installation outside of this app can take 2-4 weeks. With this app it will be implemented in ~30 minutes.
 * Product catalog upload: Sync your product catalog with your Pinterest business account to automatically create product Pins, making your products visible to all Pinners
 * Real-time updates: Changes made to product inventory and pricing are automatically updated in real-time on your product Pins
 
@@ -27,7 +27,7 @@ A: The catalog is updated daily. Product updates for a limited set of attributes
 
 Q: Can I track Pinterest conversions?
 
-A: Yes, the app provides a frontend JavaScript tracking code. It also provides the Pinterest API for Conversions for more accurate conversion data.
+A: Yes, the app provides a frontend JavaScript tracking code. It also provides the Pinterest Conversions API for more accurate conversion data.
 
 ## Support
 If you have any questions or encounter any issues while using the Pinterest app, please visit [Pinterest Help](https://help.pinterest.com/)
