@@ -23,8 +23,8 @@ function PinterestLogger() {
 /**
  * Format a single log for usage in request payload
  * @param {string} message
- * @param {string} log_level 
- * @returns 
+ * @param {string} log_level
+ * @returns
  */
 PinterestLogger.prototype.formatLog = function (message, log_level) {
     var formattedLog = {
@@ -40,7 +40,7 @@ PinterestLogger.prototype.formatLog = function (message, log_level) {
 /**
  * Create payload of logs to send to API
  * @param {array} logs
- * @returns 
+ * @returns
  */
 PinterestLogger.prototype.getRequestPayload = function (logs) {
     var payload = {
@@ -69,8 +69,8 @@ PinterestLogger.prototype.isCacheFull = function() {
 /**
  * Send logs to Pinterest if logging is enabled
  * @param {string} message
- * @param {string} log_level 
- * @returns 
+ * @param {string} log_level
+ * @returns
  */
 PinterestLogger.prototype.enqueueLog = function (message, log_level, logSamplingEnum) {
     if (!this.isLoggingEnabled() || (logSamplingEnum && this.existsInSamplingCache(logSamplingEnum))){
@@ -86,7 +86,7 @@ PinterestLogger.prototype.enqueueLog = function (message, log_level, logSampling
     }
 }
 PinterestLogger.prototype.backfillLogIds = function () {
-    var businessAccountConfig = pinterestHelper.getBusinessAccountConfig(); 
+    var businessAccountConfig = pinterestHelper.getBusinessAccountConfig();
     if (businessAccountConfig && businessAccountConfig.info) {
         var advertiserId = businessAccountConfig.info.advertiser_id;
         var merchantId = businessAccountConfig.info.merchant_id;
@@ -98,11 +98,11 @@ PinterestLogger.prototype.backfillLogIds = function () {
             this.logCache[i]["tag_id"] = tagId;
             this.logCache[i]["external_business_id"] = externalBusinessId;
         }
-    } 
+    }
 }
 
 PinterestLogger.prototype.sendLogs = function () {
-    if (pinterestHelper.isConnected()) {
+    if (pinterestHelper.isConnected() && Array.isArray(this.logCache) && this.logCache.length > 0) {
         this.backfillLogIds();
         var payload = this.getRequestPayload(this.logCache);
         var result = pinterestLoggingService.call(payload);
@@ -135,7 +135,15 @@ PinterestLogger.prototype.logErrorFromAPIResponse = function (message, result, l
 /**
  * @param {string} message
  */
-PinterestLogger.prototype.logError = function (message, logSamplingEnum) {
+PinterestLogger.prototype.logError = function (errorPayload, logSamplingEnum) {
+    var message = errorPayload ? String(errorPayload) : 'uncaptured logError messsage';
+
+    if (typeof errorPayload === 'string') {
+        message = errorPayload;
+    } else if (errorPayload instanceof Error) {
+        message = 'Pinterest error: ' + JSON.stringify({name: errorPayload.name, message: errorPayload.message, stack: errorPayload.stack});
+    }
+    
     pinterestFileLogger.error(message);
     this.enqueueLog(message, 'ERROR', logSamplingEnum);
 }

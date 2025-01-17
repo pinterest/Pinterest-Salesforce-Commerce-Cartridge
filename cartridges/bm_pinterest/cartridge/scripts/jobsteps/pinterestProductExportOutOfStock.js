@@ -73,7 +73,7 @@ exports.beforeStep = function () {
         AllCatalogData = new ArrayList(localeData);
         AllCatalogDataIterator = AllCatalogData.iterator();
     } catch (e) {
-        pinterestLoggingHelper.logError('Pinterest Error: Job cannot run, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLoggingHelper.logError(e || 'Pinterest Error: Job cannot run, unknown error');
         pinterestLoggingHelper.flushLogCache();
         throw e;
     }

@@ -167,7 +167,7 @@ function handleConnectionCallback(httpParameterMap) {
                 pinterestBMHelpers.setBusinessAccountConfig(pinterestAppID, pinterestConfigurationData);
                 setBusinessAccountConfigResult = true;
             } catch (e) {
-                pinterestLoggingHelper.logError('Account configuration save failed: ' + ((e && e.message)? e.message : 'unknown error'));
+                pinterestLoggingHelper.logError(e || 'Account configuration save failed: unknown error');
             }
             
 
@@ -265,7 +265,7 @@ function handleConnectionCallback(httpParameterMap) {
                 pinterestBMHelpers.setBusinessAccountConfig(pinterestAppID, businessAccountConfig);
                 setBusinessAccountConfigResult = true;
             } catch (e){
-                pinterestLoggingHelper.logError('Account configuration save failed: ' + ((e && e.message)? e.message : 'unknown error'));
+                pinterestLoggingHelper.logError(e || 'Account configuration save failed: unknown error');
                 setBusinessAccountConfigResult = false;
             }
 
@@ -294,7 +294,7 @@ function handleConnectionCallback(httpParameterMap) {
         viewData.errorID = 'GENERIC';
         errorMessage = Resource.msg('error.callbackFailed', 'pinterestbm', null) + ((e && e.message)? e.message : 'unknown error');
         viewData.errorMessage = errorMessage + ' ' + Resource.msg('error.callback', 'pinterestbm', null);
-        pinterestLoggingHelper.logError('Pinterest error: ' + errorMessage);
+        pinterestLoggingHelper.logError(e || 'Pinterest error: ' + errorMessage);
     }
     pinterestLoggingHelper.flushLogCache();
     viewData.pinterestBaseUrl = siteCurrent.getCustomPreferenceValue('pinterestIntegrationBaseURL');
@@ -366,7 +366,7 @@ function handleDisconnection() {
         viewData.error = true;
         viewData.errorID = 'ERROR_DISCONNECT';
         viewData.errorMessage = Resource.msg('error.disconnectfailure', 'pinterestbm', null);
-        pinterestLoggingHelper.logError('Pinterest error: Account disconnect failed, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLoggingHelper.logError(e || 'Pinterest error: Account disconnect failed, unknown error');
     }
     return viewData;
 }
@@ -519,7 +519,7 @@ server.get('Domain', server.middleware.https, function (req, res, next) {
         viewData.error = true;
         viewData.errorID = 'GENERIC';
         viewData.errorMessage = Resource.msg('error.domainverificationfailed', 'pinterestbm', null);
-        pinterestLoggingHelper.logError('Pinterest error: Domain verification failed, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLoggingHelper.logError(e || 'Pinterest error: Domain verification failed, unknown error');
     }
 
     pinterestLoggingHelper.flushLogCache();
