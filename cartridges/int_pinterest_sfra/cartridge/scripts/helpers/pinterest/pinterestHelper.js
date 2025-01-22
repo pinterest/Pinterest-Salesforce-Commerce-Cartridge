@@ -385,7 +385,7 @@ function refreshAccessToken(businessAccountConfig) {
                     module.exports.setBusinessAccountConfig(pinterestAppID, businessAccountConfig);
                     return businessAccountConfig;
                 } catch(e){
-                    pinterestLogger.logError('Account configuration save failed: ' + ((e && e.message)? e.message : 'unknown error'));
+                    pinterestLogger.logError(e || 'Account configuration save failed: unknown error');
                     return false;
                 }
             } else {
@@ -396,7 +396,7 @@ function refreshAccessToken(businessAccountConfig) {
             return businessAccountConfig;
         }
     } catch(e) {
-        pinterestLogger.logError('Pinterest error: OAuth failed, ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLogger.logError(e || 'Pinterest error: OAuth failed, unknown error');
 
         return false;
     }
@@ -448,7 +448,7 @@ function resetProductIDsWithInventoryStatusChange() {
             return false;
         }
     } catch (e) {
-        pinterestLogger.logError('Pinterest reset catalog out of stock failed: ' + ((e && e.message)? e.message : 'unknown error'));
+        pinterestLogger.logError(e || 'Pinterest error: reset catalog out of stock failed: unknown error');
 
         return false;
     }

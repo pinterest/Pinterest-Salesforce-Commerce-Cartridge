@@ -40,7 +40,7 @@ server.append('AddProduct', function (req, res, next) {
             }
         }
     } catch (e) {
-        pinterestLogger.logError('Pinterest error: AddProduct, ' + ((e && e.message)? e.message : 'unknown error'), LogSamplingEnums.CAPI_ADD_TO_CART_EXCEPTION);
+        pinterestLogger.logError(e || 'Pinterest error: AddProduct, unknown error', LogSamplingEnums.CAPI_ADD_TO_CART_EXCEPTION);
     }
     pinterestLogger.flushLogCache(); // we have to flush or the log will be lost
     next();

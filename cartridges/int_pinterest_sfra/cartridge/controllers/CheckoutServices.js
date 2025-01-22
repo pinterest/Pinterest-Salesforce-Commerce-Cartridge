@@ -68,7 +68,7 @@ server.append('PlaceOrder', function (req, res, next) {
             }
         }
     } catch (e) {
-        pinterestLogger.logError('Pinterest error: PlaceOrder, ' + ((e && e.message)? e.message : 'unknown error'), LogSamplingEnums.CHECKOUT_SET_CONFIG_EXCEPTION);
+        pinterestLogger.logError(e || 'Pinterest error: PlaceOrder, unknown error', LogSamplingEnums.CHECKOUT_SET_CONFIG_EXCEPTION);
     }
     pinterestLogger.flushLogCache();
     next();

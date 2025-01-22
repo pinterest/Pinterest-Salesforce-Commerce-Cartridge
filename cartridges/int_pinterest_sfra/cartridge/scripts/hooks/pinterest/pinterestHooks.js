@@ -60,7 +60,7 @@ function htmlHead (pdict) {
             );
         }
     } catch (e) {
-        pinterestLogger.logError('Pinterest error: hook failed, ' + ((e && e.message)? e.message : 'unknown error'), LogSamplingEnums.PINTEREST_CONVERSION_SERVICE_EXCEPTION);
+        pinterestLogger.logError(e || 'Pinterest error: hook failed, unknown error', LogSamplingEnums.PINTEREST_CONVERSION_SERVICE_EXCEPTION);
     }
 }
 
