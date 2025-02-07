@@ -26,15 +26,26 @@ function PinterestLogger() {
  * @param {string} log_level
  * @returns
  */
-PinterestLogger.prototype.formatLog = function (message, log_level) {
+PinterestLogger.prototype.formatLog = function (message, log_level, additionalPayload) {
+    var loggingMsgMaxLen = 2000;    // integration logging API has max 1024 length limit for message field
+
     var formattedLog = {
         "client_timestamp": Date.now(),
         "event_type": 'APP',
         "log_level": log_level,
-        "message": message,
+        "message": typeof message === 'string' ? message.slice(0, loggingMsgMaxLen) : message,
         "app_version_number": this.app_version_number,
         "platform_version_number": this.platform_version_number
     };
+
+    if(additionalPayload instanceof Error) {
+        formattedLog.error = {
+            name: additionalPayload.name,
+            message: additionalPayload.message,
+            stack_trace: additionalPayload.stack
+        };
+    }
+
     return formattedLog;
 }
 /**
@@ -72,13 +83,13 @@ PinterestLogger.prototype.isCacheFull = function() {
  * @param {string} log_level
  * @returns
  */
-PinterestLogger.prototype.enqueueLog = function (message, log_level, logSamplingEnum) {
+PinterestLogger.prototype.enqueueLog = function (message, log_level, logSamplingEnum, additionalPayload) {
     if (!this.isLoggingEnabled() || (logSamplingEnum && this.existsInSamplingCache(logSamplingEnum))){
         // ignore log if logging is disabled or if this log should be sampled out
         return;
     }
     if (message) {
-        var formattedLog = this.formatLog(message, log_level);
+        var formattedLog = this.formatLog(message, log_level, additionalPayload);
         this.logCache.push(formattedLog);
     }
     if (this.isCacheFull()) {
@@ -137,15 +148,17 @@ PinterestLogger.prototype.logErrorFromAPIResponse = function (message, result, l
  */
 PinterestLogger.prototype.logError = function (errorPayload, logSamplingEnum) {
     var message = errorPayload ? String(errorPayload) : 'uncaptured logError messsage';
+    var additionalPayload = undefined;
 
     if (typeof errorPayload === 'string') {
         message = errorPayload;
     } else if (errorPayload instanceof Error) {
-        message = 'Pinterest error: ' + JSON.stringify({name: errorPayload.name, message: errorPayload.message, stack: errorPayload.stack});
+        message = 'Pinterest error: ' + errorPayload.name + ' - ' + errorPayload.message;
+        additionalPayload = errorPayload;
     }
     
     pinterestFileLogger.error(message);
-    this.enqueueLog(message, 'ERROR', logSamplingEnum);
+    this.enqueueLog(message, 'ERROR', logSamplingEnum, additionalPayload);
 }
 
 /**
