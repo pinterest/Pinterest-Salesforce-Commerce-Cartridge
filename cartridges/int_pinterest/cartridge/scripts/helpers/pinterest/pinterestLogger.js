@@ -28,6 +28,8 @@ function PinterestLogger() {
  */
 PinterestLogger.prototype.formatLog = function (message, log_level, additionalPayload) {
     var loggingMsgMaxLen = 2000;    // integration logging API has max 1024 length limit for message field
+    var errorNameMaxLen = 250; // Error.name has a max length of 256
+    var errorMsgMaxLen = 1000; // Error.message has a max length of 1024
 
     var formattedLog = {
         "client_timestamp": Date.now(),
@@ -39,10 +41,15 @@ PinterestLogger.prototype.formatLog = function (message, log_level, additionalPa
     };
 
     if(additionalPayload instanceof Error) {
+        const { message: errorMsg, name, stack } = additionalPayload;
         formattedLog.error = {
-            name: additionalPayload.name,
-            message: additionalPayload.message,
-            stack_trace: additionalPayload.stack
+          name: typeof name === "string" ? name.slice(0, errorNameMaxLen) : name,
+          message:
+            typeof errorMsg === "string"
+              ? errorMsg.slice(0, errorMsgMaxLen)
+              : errorMsg,
+          stack_trace:
+            typeof stack === "string" ? stack.slice(0, loggingMsgMaxLen) : stack,
         };
     }
 
