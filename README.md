@@ -5,7 +5,7 @@ With billions of Pins on Pinterest, you'll always find ideas to spark inspiratio
 
 The Pinterest for Salesforce Commerce Cloud cartridge allows merchants to connect their Salesforce Commerce store to Pinterest, making it easy to showcase products to hundreds of millions of Pinterest users with a single integration.
 
-## Installation instructions
+## Installation instructions 
 
 For instructions please refer to `documentation` folder.
 
