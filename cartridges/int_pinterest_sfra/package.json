@@ -1,6 +1,6 @@
 {
   "name": "int_pinterest_sfra",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "hooks": "./hooks.json",
   "caches": "./caches.json"
 }
