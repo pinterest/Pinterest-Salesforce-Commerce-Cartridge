@@ -363,9 +363,18 @@ function refreshAccessToken(businessAccountConfig) {
         var nowSeconds = (Math.floor(new Date().getTime()/1000));
         var pinterestAppID = Site.getCurrent().getCustomPreferenceValue('pinterestAppID');
         var bufferSeconds = 15*86400; // 15 days in seconds;
+        var refreshInterval = 86400; // one day in seconds
+        var lastAttempt = businessAccountConfig.lastRefreshAttempt;
 
-        // check if we are in range of both token expirations
         if (
+            businessAccountConfig.refreshAccessTokenExpiration > nowSeconds
+            || businessAccountConfig.invalidToken 
+            || (lastAttempt && (lastAttempt + refreshInterval) > nowSeconds)
+        ) {
+            // request will not be sent
+            return false;
+        // check if we are in range of both token expirations
+        } else if (
             !businessAccountConfig.tokenLastRefresh
             || (businessAccountConfig.tokenLastRefresh + bufferSeconds) < nowSeconds
         ) {
@@ -389,6 +398,13 @@ function refreshAccessToken(businessAccountConfig) {
                     return false;
                 }
             } else {
+                if(result.error == 401) {
+                    businessAccountConfig.invalidToken = true;
+                    pinterestLogger.logError('Pinterest error: Expired token. Token marked as invalid.');
+                }
+                // in case there is another error, save the last request attempt and try again after the interval
+                businessAccountConfig.lastRefreshAttempt = nowSeconds;
+                module.exports.setBusinessAccountConfig(pinterestAppID, businessAccountConfig);
                 pinterestLogger.logError('Pinterest error: OAuth - ' + result.msg + ' - ' + result.errorMessage);
                 return false;
             }
