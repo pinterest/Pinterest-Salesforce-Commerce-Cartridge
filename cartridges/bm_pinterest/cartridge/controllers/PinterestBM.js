@@ -403,17 +403,23 @@ server.get('Start', server.middleware.https, function (req, res, next) {
         };
 
         //disconnect
+        // Only allow disconnect if it comes from button click
+        // The referrer should be the PinterestBM-Start page itself, indicating it came from the button
+        var httpReferer = request.getHttpReferer();
+        var isFromButtonClick = httpReferer && httpReferer.indexOf('PinterestBM-Start') !== -1;
+        
         if (
             httpParameterMap
             && httpParameterMap.disconnectPinterest
             && httpParameterMap.disconnectPinterest.booleanValue === true
+            && isFromButtonClick
             && pinterestBMHelpers.isConnected(businessAccountConfig)
         ) {
             viewData = handleDisconnection();
             businessAccountConfig = pinterestBMHelpers.getBusinessAccountConfig();
         }
 
-
+        
 
         //render
         viewData.locale = req.locale.id.length == 2 ? languageMapping[req.locale.id] : req.locale.id;
